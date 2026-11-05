@@ -726,17 +726,6 @@ app.post('/api/system/window/relaunch', (req, res) => {
   });
 });
 
-// Switch UI tab remotely via WebSocket
-app.post('/api/system/ui/tab/:tabId', (req, res) => {
-  const tab = req.params.tabId;
-  wss.clients.forEach(client => {
-    if (client.readyState === 1) {
-      client.send(JSON.stringify({ type: 'switch_tab', tab }));
-    }
-  });
-  res.json({ success: true, tab });
-});
-
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, 'public')));
 
