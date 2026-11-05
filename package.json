@@ -1,0 +1,14 @@
+{
+  "name": "airplay-dashboard",
+  "version": "1.0.0",
+  "description": "Apple Music-inspired AirPlay 2 Dashboard for Raspberry Pi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dbus-next": "^0.10.2",
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
+  }
+}

@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Logs & Temporary files
+*.log
+/tmp/
+.DS_Store
+Thumbs.db
+
+# Chromium profile & cache
+chromium-profile/
+.cache/

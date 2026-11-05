@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=AirPlay 2 Dashboard
+GenericName=AirPlay Music Display
+Comment=AirPlay 2 Music Display & Precision Telemetry
+Exec=/opt/airplay-dashboard/launch-display.sh
+Icon=multimedia-audio-player
+Terminal=false
+Categories=AudioVideo;Audio;Player;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

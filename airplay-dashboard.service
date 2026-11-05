@@ -1,0 +1,26 @@
+[Unit]
+Description=AirPlay 2 Music Dashboard
+After=network.target dbus.service shairport-sync.service
+Wants=shairport-sync.service
+
+[Service]
+Type=simple
+User=mrps
+Group=mrps
+WorkingDirectory=/opt/airplay-dashboard
+Environment=NODE_ENV=production
+Environment=PORT=8080
+ExecStart=/usr/bin/node /opt/airplay-dashboard/server.js
+Restart=always
+RestartSec=3
+
+# Hardening (Crucial: PrivateTmp=false to access /tmp/shairport-sync/.cache/coverart)
+PrivateTmp=false
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/opt/airplay-dashboard
+ReadOnlyPaths=/tmp/shairport-sync
+
+[Install]
+WantedBy=multi-user.target
