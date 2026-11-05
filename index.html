@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AirPlay 2 Music & Precision Diagnostics</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+  <link rel="stylesheet" href="/style.css?v=12.0">
+</head>
+<body>
+  <!-- Ambient Dynamic Artwork Color Mesh & Blur Backdrop -->
+  <div id="ambient-color-mesh" class="ambient-color-mesh"></div>
+  <div id="ambient-backdrop" class="ambient-backdrop"></div>
+  <div class="ambient-liquid-overlay"></div>
+
+  <!-- Dashboard Shell -->
+  <div class="dashboard-shell">
+    
+    <!-- Top Navigation & Header -->
+    <header class="dashboard-header">
+      <!-- Left: AirPlay Brand -->
+      <div class="brand">
+        <div class="airplay-icon-glass">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/>
+            <polygon points="12 15 17 21 7 21 12 15" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">AirPlay</span>
+          <span class="brand-pill" id="protocol-pill">AirPlay 2</span>
+        </div>
+      </div>
+
+      <!-- Center: Segmented Navigation Control -->
+      <nav class="nav-segment-control">
+        <button id="tab-btn-now-playing" class="nav-tab-btn active" data-tab="now-playing">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+          <span>Now Playing</span>
+        </button>
+        <button id="tab-btn-diagnostics" class="nav-tab-btn" data-tab="diagnostics">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          <span>Advanced Diagnostics</span>
+        </button>
+      </nav>
+
+      <!-- Right: Playback Status Pill & Window Controls -->
+      <div class="header-right">
+        <div class="window-control-dock" id="window-control-dock" aria-label="Desktop Window Controls">
+          <button id="btn-window-minimize" class="window-action-btn" title="Minimize to Raspberry Pi Desktop (Key: M or Super+D)">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span class="btn-label">Desktop</span>
+            <kbd class="key-badge">M</kbd>
+          </button>
+          <button id="btn-window-fullscreen" class="window-action-btn" title="Toggle Fullscreen (Key: F11)">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+            <kbd class="key-badge">F11</kbd>
+          </button>
+          <button id="btn-window-close" class="window-action-btn btn-close" title="Stop / Close Display (Key: Q or Alt+F4)">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <kbd class="key-badge">Q</kbd>
+          </button>
+        </div>
+
+        <div class="status-glass-pill" id="playback-status-pill">
+          <span class="status-pulse-dot" id="status-pulse"></span>
+          <span id="status-text">Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Floating Side Desktop Control Pill (Option on the Side) -->
+    <aside class="side-desktop-panel" id="side-desktop-panel" aria-label="Quick Desktop Switcher">
+      <button class="side-pill-btn" id="side-pill-minimize" title="Minimize to Raspberry Pi Desktop (Shortcut: M or Super+D)">
+        <span class="side-pill-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+        </span>
+        <span class="side-pill-text">Desktop</span>
+        <kbd class="side-pill-kbd">M</kbd>
+      </button>
+      <button class="side-pill-btn" id="side-pill-fullscreen" title="Toggle Fullscreen (Shortcut: F11)">
+        <span class="side-pill-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </span>
+        <kbd class="side-pill-kbd">F11</kbd>
+      </button>
+    </aside>
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: NOW PLAYING (HERO VIEW)                            -->
+    <!-- ======================================================== -->
+    <main id="view-now-playing" class="view-panel active">
+      <div class="now-playing-container">
+        
+        <!-- Left: Liquid Glass Artwork Hero -->
+        <div class="artwork-stage">
+          <div class="liquid-glass-frame" id="liquid-glass-frame">
+            <div class="glass-specular-highlight"></div>
+            <div class="glass-inner-reflection"></div>
+            <div class="artwork-viewport">
+              <img id="artwork-img-current" class="artwork-img" src="" alt="Album Artwork">
+              <img id="artwork-img-next" class="artwork-img" src="" alt="Album Artwork">
+              
+              <!-- Liquid Glass Standby Hero Display -->
+              <div id="artwork-standby-hero" class="artwork-standby-hero active">
+                <div class="standby-glass-core">
+                  <div class="standby-airplay-badge">
+                    <svg viewBox="0 0 24 24" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/>
+                      <polygon points="12 15 17 21 7 21 12 15" fill="currentColor"/>
+                    </svg>
+                  </div>
+                  <div class="standby-brand-row">
+                    <span class="standby-title">AirPlay 2</span>
+                    <span class="standby-pill" id="standby-receiver-pill">Ready to Stream</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="liquid-rim-glow"></div>
+          </div>
+        </div>
+
+        <!-- Right: Song Hero Information & Audio Seeking -->
+        <div class="music-details-stage">
+          
+          <div class="song-meta-header">
+            <div class="genre-row" id="genre-row" style="display: none;">
+              <span class="glass-badge highlight" id="badge-genre" style="display: none;"></span>
+              <span class="glass-badge" id="badge-track-num" style="display: none;"></span>
+              <span class="glass-badge" id="badge-codec" style="display: none;"></span>
+            </div>
+
+            <h1 class="song-title" id="song-title">AirPlay 2</h1>
+            <h2 class="song-artist" id="song-artist">Ready to Stream</h2>
+            <h3 class="song-album" id="song-album">Connect via Control Center on your Apple device</h3>
+          </div>
+
+          <!-- Glossy Audio Seeking / Progress Bar -->
+          <div class="audio-seeking-panel stopped" id="audio-seeking-panel">
+            <div class="progress-bar-container" id="progress-bar-container">
+              <div class="progress-track-glass">
+                <div class="progress-fill-glow" id="progress-fill"></div>
+                <div class="progress-scrub-knob" id="progress-knob"></div>
+              </div>
+            </div>
+            <div class="time-readout-row">
+              <span class="time-counter" id="time-elapsed">0:00</span>
+              <span class="time-counter remaining" id="time-duration">0:00</span>
+            </div>
+            <div class="seek-hint-toast" id="seek-hint-toast">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/>
+                <polygon points="12 15 17 21 7 21 12 15" fill="currentColor"/>
+              </svg>
+              <span>AirPlay 2: Scrub &amp; seek directly on your Apple device</span>
+            </div>
+          </div>
+
+          <!-- Bottom Audio Details Row -->
+          <div class="now-playing-pills-row">
+            <div class="floating-pill">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              </svg>
+              <span id="pill-volume">Volume: --</span>
+            </div>
+
+            <div class="floating-pill" id="pill-stream-info">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+              </svg>
+              <span id="pill-stream-format">AirPlay 2 Standby</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: ADVANCED DIAGNOSTICS & VINTAGE STEREO METERS      -->
+    <!-- ======================================================== -->
+    <main id="view-diagnostics" class="view-panel">
+      
+      <!-- Top Console: High-End Dual Stereo Analogue VU Needles -->
+      <section class="vintage-vu-console">
+        <div class="vu-console-header">
+          <div class="vu-console-title-wrap">
+            <div class="vu-chassis-brand-row">
+              <span class="vu-brand-badge">HI-FI AUDIO CALIBRATION</span>
+              <span class="vu-chassis-brand">REAL-TIME ATTENUATION &amp; DAC HARDWARE BUFFER DEPTH</span>
+            </div>
+            <h3 class="vu-console-title">Precision Stereo Decibel &amp; Hardware Buffer Depth Meters</h3>
+          </div>
+          
+          <div class="vu-console-controls">
+            <div class="vu-lamp-indicator">
+              <span class="lamp-filament"></span>
+              <span>WARM TUBE BACKLIGHT</span>
+            </div>
+            <div class="vu-mode-badge" id="vu-mode-badge">Level &amp; Buffer Depth</div>
+          </div>
+        </div>
+
+        <!-- Dual Stereo Needles Display Chassis -->
+        <div class="vu-meters-chassis">
+          
+          <!-- Left Channel Meter -->
+          <div class="analogue-vu-unit">
+            <div class="meter-faceplate">
+              <div class="meter-bezel-glare"></div>
+              <div class="meter-corner-screw tl"></div>
+              <div class="meter-corner-screw tr"></div>
+              <div class="meter-corner-screw bl"></div>
+              <div class="meter-corner-screw br"></div>
+              <div class="meter-peak-lamp" id="peak-lamp-left">
+                <span class="led-dot"></span>
+                <span class="led-text">PEAK 0dB</span>
+              </div>
+              <svg id="svg-vu-left" class="vu-meter-svg" viewBox="0 0 560 270" width="100%" height="100%">
+    <defs>
+      <radialGradient id="lamp-glow-left" cx="50%" cy="15%" r="85%">
+        <stop offset="0%" stop-color="#fffcf2"/>
+        <stop offset="35%" stop-color="#faeed6"/>
+        <stop offset="70%" stop-color="#ecd6b0"/>
+        <stop offset="100%" stop-color="#d9bb8f"/>
+      </radialGradient>
+      <radialGradient id="vignette-left" cx="50%" cy="50%" r="65%">
+        <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+        <stop offset="80%" stop-color="rgba(50,25,5,0.08)"/>
+        <stop offset="100%" stop-color="rgba(40,15,0,0.42)"/>
+      </radialGradient>
+      <filter id="shadow-left" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="3" dy="2" stdDeviation="2.5" flood-color="rgba(40,20,5,0.4)"/>
+      </filter>
+    </defs>
+
+    <rect x="0" y="0" width="560" height="270" rx="10" fill="url(#lamp-glow-left)"/>
+    <rect x="0" y="0" width="560" height="270" rx="10" fill="url(#vignette-left)"/>
+    <rect x="4" y="4" width="552" height="262" rx="8" fill="none" stroke="rgba(90,55,20,0.4)" stroke-width="1.2"/>
+
+    <!-- Mechanical Stop Pins -->
+    <circle cx="144.3" cy="105.2" r="3.5" fill="#2a1a0c" stroke="#c4974f" stroke-width="1"/>
+    <circle cx="409.9" cy="99.9" r="3.5" fill="#2a1a0c" stroke="#c4974f" stroke-width="1"/>
+
+    <!-- Scales -->
+    <path d="M 150 102.7 A 195 195 0 0 1 333.9 60.6" fill="none" stroke="#181714" stroke-width="2.5"/>
+    <path d="M 333.9 60.6 A 195 195 0 0 1 402.6 96.4" fill="none" stroke="#d61828" stroke-width="4.2"/>
+    <path d="M 162 116.1 A 177 177 0 0 1 328.9 77.9" fill="none" stroke="rgba(24, 23, 20, 0.4)" stroke-width="1"/>
+
+    <line x1="154.6" y1="107.9" x2="144.6" y2="96.7" stroke="#181714" stroke-width="2.4"/>
+    <text x="138" y="89.3" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-20</text>
+    <line x1="193.2" y1="81.2" x2="187.6" y2="70.6" stroke="#181714" stroke-width="1.6"/>
+    <text x="181.6" y="59.1" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-10</text>
+    <line x1="219.1" y1="70.1" x2="215.2" y2="58.8" stroke="#181714" stroke-width="1.6"/>
+    <text x="211" y="46.5" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-7</text>
+    <line x1="242.7" y1="63.7" x2="240.3" y2="52" stroke="#181714" stroke-width="1.6"/>
+    <text x="237.7" y="39.2" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-5</text>
+    <line x1="270.6" y1="60.2" x2="270" y2="48.2" stroke="#181714" stroke-width="1.6"/>
+    <text x="269.4" y="35.3" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-3</text>
+    <line x1="291.3" y1="60.3" x2="292" y2="48.4" stroke="#181714" stroke-width="1.6"/>
+    <text x="292.8" y="35.4" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-2</text>
+    <line x1="311.8" y1="62.7" x2="313.8" y2="50.9" stroke="#181714" stroke-width="1.6"/>
+    <text x="316" y="38.1" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">-1</text>
+    <line x1="332" y1="67.3" x2="336.1" y2="52.9" stroke="#d61828" stroke-width="2.4"/>
+    <text x="338.9" y="43.3" fill="#d61828" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central">0</text>
+    <line x1="354.9" y1="75.6" x2="359.7" y2="64.6" stroke="#d61828" stroke-width="1.6"/>
+    <text x="364.9" y="52.7" fill="#d61828" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central">+1</text>
+    <line x1="376.7" y1="86.8" x2="382.8" y2="76.5" stroke="#d61828" stroke-width="1.6"/>
+    <text x="389.5" y="65.3" fill="#d61828" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central">+2</text>
+    <line x1="398.2" y1="101.8" x2="405.8" y2="92.5" stroke="#d61828" stroke-width="1.6"/>
+    <text x="413.9" y="82.4" fill="#d61828" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central">+3</text>
+    <line x1="152.6" y1="105.7" x2="148.6" y2="101.2" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="157.7" y1="101.3" x2="153.8" y2="96.7" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="162.9" y1="97.1" x2="159.2" y2="92.4" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="168.2" y1="93.1" x2="164.7" y2="88.2" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="173.7" y1="89.3" x2="170.4" y2="84.3" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="179.4" y1="85.7" x2="176.2" y2="80.6" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="185.1" y1="82.2" x2="182.1" y2="77" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="191" y1="79" x2="188.2" y2="73.7" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="196.9" y1="76" x2="194.3" y2="70.6" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="203" y1="73.2" x2="200.6" y2="67.7" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="209.2" y1="70.6" x2="206.9" y2="65.1" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="215.4" y1="68.3" x2="213.4" y2="62.6" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="221.7" y1="66.1" x2="219.9" y2="60.4" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="228.1" y1="64.2" x2="226.5" y2="58.4" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="234.6" y1="62.5" x2="233.2" y2="56.6" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="241.1" y1="61" x2="239.9" y2="55.1" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="247.7" y1="59.8" x2="246.7" y2="53.8" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="254.3" y1="58.7" x2="253.5" y2="52.8" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="260.9" y1="58" x2="260.3" y2="52" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="267.6" y1="57.4" x2="267.2" y2="51.4" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="274.3" y1="57.1" x2="274.1" y2="51.1" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="281" y1="57" x2="281" y2="51" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="287.6" y1="57.2" x2="287.9" y2="51.2" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="294.3" y1="57.5" x2="294.8" y2="51.6" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="301" y1="58.2" x2="301.6" y2="52.2" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="307.6" y1="59" x2="308.5" y2="53.1" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="314.2" y1="60.1" x2="315.3" y2="54.2" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="320.7" y1="61.4" x2="322" y2="55.5" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="327.3" y1="62.9" x2="328.7" y2="57.1" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1"/>
+    <line x1="333.7" y1="64.7" x2="335.4" y2="58.9" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="340.1" y1="66.7" x2="342" y2="61" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="346.4" y1="68.9" x2="348.5" y2="63.3" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="352.6" y1="71.3" x2="354.9" y2="65.8" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="358.8" y1="74" x2="361.2" y2="68.5" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="364.8" y1="76.9" x2="367.5" y2="71.5" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="370.7" y1="79.9" x2="373.6" y2="74.6" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="376.6" y1="83.2" x2="379.6" y2="78" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="382.3" y1="86.7" x2="385.5" y2="81.6" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="387.8" y1="90.4" x2="391.2" y2="85.4" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="393.3" y1="94.2" x2="396.9" y2="89.4" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+    <line x1="398.6" y1="98.3" x2="402.3" y2="93.6" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1"/>
+
+    <line x1="162" y1="116.1" x2="158.6" y2="112.4" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="166.6" y="121.3" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">0</text>
+    <line x1="192.1" y1="94.4" x2="189.6" y2="90.1" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="195.5" y="100.5" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">20</text>
+    <line x1="217.6" y1="82.3" x2="215.9" y2="77.7" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="220.1" y="88.9" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">40</text>
+    <line x1="250.1" y1="73.6" x2="249.2" y2="68.6" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="251.2" y="80.5" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">60</text>
+    <line x1="288.8" y1="71.2" x2="289.1" y2="66.2" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="288.5" y="78.2" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">80</text>
+    <line x1="328.9" y1="77.9" x2="330.3" y2="73.1" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="327" y="84.6" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">100</text>
+
+
+    <!-- Badging -->
+    <text x="280" y="98" font-family="Georgia, serif" font-weight="900" font-size="22" fill="#1c1b18" text-anchor="middle">VU</text>
+    <text x="280" y="118" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" font-size="8.5" fill="rgba(28,27,24,0.75)" letter-spacing="1.5" text-anchor="middle">VOLUME UNIT</text>
+    <text x="280" y="134" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="7.5" fill="rgba(28,27,24,0.55)" text-anchor="middle">100% = 0 dB • CALIBRATED ATTENUATION</text>
+    <text x="280" y="152" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" font-size="8.5" fill="#8f6828" letter-spacing="1.2" text-anchor="middle">AIRPLAY 2 • PRECISION HI-FI MONITOR</text>
+
+    <!-- Needle Assembly (Rotates around 280, 248) -->
+    <g id="needle-group-left" style="transform-origin: 280px 248px; transform: rotate(-41.8deg); transition: transform 0.22s cubic-bezier(0.12, 0.9, 0.25, 1);">
+      <g filter="url(#shadow-left)">
+        <polygon points="276.4,248 279.4,36 280.6,36 283.6,248" fill="#181715"/>
+        <polygon points="278.8,78 279.4,36 280.6,36 281.2,78" fill="#ea2030"/>
+        <line x1="280" y1="248" x2="280" y2="265" stroke="#181715" stroke-width="3.2"/>
+        <circle cx="280" cy="265" r="4.2" fill="#181715"/>
+      </g>
+      <circle cx="280" cy="248" r="16" fill="#1e1c18" stroke="#c4974f" stroke-width="2"/>
+      <circle cx="280" cy="248" r="10" fill="#11100e" stroke="#8f6828" stroke-width="1"/>
+      <circle cx="280" cy="248" r="4.5" fill="#c4974f"/>
+    </g>
+  </svg>
+              <div class="channel-engraving">CH 1 • AIRPLAY AUDIO ATTENUATION (dB)</div>
+            </div>
+          </div>
+
+          <!-- Right Channel Meter -->
+          <div class="analogue-vu-unit">
+            <div class="meter-faceplate">
+              <div class="meter-bezel-glare"></div>
+              <div class="meter-corner-screw tl"></div>
+              <div class="meter-corner-screw tr"></div>
+              <div class="meter-corner-screw bl"></div>
+              <div class="meter-corner-screw br"></div>
+              <div class="meter-peak-lamp" id="peak-lamp-right">
+                <span class="led-dot"></span>
+                <span class="led-text">XRUN ALERT</span>
+              </div>
+              <svg id="svg-vu-right" class="vu-meter-svg" viewBox="0 0 560 270" width="100%" height="100%">
+    <defs>
+      <radialGradient id="lamp-glow-right" cx="50%" cy="15%" r="85%">
+        <stop offset="0%" stop-color="#fffcf2"/>
+        <stop offset="35%" stop-color="#faeed6"/>
+        <stop offset="70%" stop-color="#ecd6b0"/>
+        <stop offset="100%" stop-color="#d9bb8f"/>
+      </radialGradient>
+      <radialGradient id="vignette-right" cx="50%" cy="50%" r="65%">
+        <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+        <stop offset="80%" stop-color="rgba(50,25,5,0.08)"/>
+        <stop offset="100%" stop-color="rgba(40,15,0,0.42)"/>
+      </radialGradient>
+      <filter id="shadow-right" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="3" dy="2" stdDeviation="2.5" flood-color="rgba(40,20,5,0.4)"/>
+      </filter>
+    </defs>
+
+    <rect x="0" y="0" width="560" height="270" rx="10" fill="url(#lamp-glow-right)"/>
+    <rect x="0" y="0" width="560" height="270" rx="10" fill="url(#vignette-right)"/>
+    <rect x="4" y="4" width="552" height="262" rx="8" fill="none" stroke="rgba(90,55,20,0.4)" stroke-width="1.2"/>
+
+    <!-- Mechanical Stop Pins -->
+    <circle cx="144.3" cy="105.2" r="3.5" fill="#2a1a0c" stroke="#c4974f" stroke-width="1"/>
+    <circle cx="409.9" cy="99.9" r="3.5" fill="#2a1a0c" stroke="#c4974f" stroke-width="1"/>
+
+    <!-- Scales: 0% to 100% Hardware Ring Buffer Fill -->
+    <!-- Starvation Hazard Zone: 0% to 15% (Red) -->
+    <path d="M 150 102.7 A 195 195 0 0 1 183.4 78.6" fill="none" stroke="#d61828" stroke-width="4.2"/>
+    <!-- Nominal DMA Ring Queue: 15% to 80% (Dark Slate) -->
+    <path d="M 183.4 78.6 A 195 195 0 0 1 355.7 68.3" fill="none" stroke="#181714" stroke-width="2.5"/>
+    <!-- High Latency Fill: 80% to 100% (Warm Amber) -->
+    <path d="M 355.7 68.3 A 195 195 0 0 1 402.6 96.4" fill="none" stroke="#c4974f" stroke-width="3.5"/>
+    <!-- Secondary Latency Scale Arc (177 Radius) -->
+    <path d="M 162 116.1 A 177 177 0 0 1 391 110.5" fill="none" stroke="rgba(24, 23, 20, 0.4)" stroke-width="1"/>
+
+    <!-- Major Percentage Ticks & Labels -->
+    <!-- 0% (Starvation) -->
+    <line x1="150" y1="102.7" x2="141.4" y2="92.9" stroke="#d61828" stroke-width="2.6"/>
+    <text x="132" y="82.5" fill="#d61828" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">0%</text>
+
+    <!-- 20% -->
+    <line x1="195.6" y1="72.2" x2="190" y2="60.5" stroke="#181714" stroke-width="1.8"/>
+    <text x="184" y="47.9" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">20</text>
+
+    <!-- 40% -->
+    <line x1="247.9" y1="55.7" x2="245.7" y2="42.9" stroke="#181714" stroke-width="1.8"/>
+    <text x="243.4" y="29.0" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">40</text>
+
+    <!-- 60% -->
+    <line x1="302.7" y1="54.3" x2="304.2" y2="41.4" stroke="#181714" stroke-width="1.8"/>
+    <text x="305.8" y="27.5" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">60</text>
+
+    <!-- 80% -->
+    <line x1="355.7" y1="68.3" x2="360.7" y2="56.3" stroke="#181714" stroke-width="1.8"/>
+    <text x="366.2" y="43.4" fill="#181714" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">80</text>
+
+    <!-- 100% -->
+    <line x1="402.7" y1="96.5" x2="410.9" y2="86.4" stroke="#c4974f" stroke-width="2.6"/>
+    <text x="420" y="75.5" fill="#8f6828" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">100%</text>
+
+    <!-- Minor Buffer Ticks -->
+    <line x1="171.8" y1="85.8" x2="167.9" y2="80.0" stroke="rgba(214, 24, 40, 0.7)" stroke-width="1.2"/>
+    <line x1="221.2" y1="62.1" x2="217.2" y2="53.7" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1.2"/>
+    <line x1="275.2" y1="53.1" x2="274.9" y2="44.1" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1.2"/>
+    <line x1="329.7" y1="59.4" x2="333.0" y2="50.9" stroke="rgba(24, 23, 20, 0.45)" stroke-width="1.2"/>
+    <line x1="380.2" y1="80.7" x2="386.9" y2="72.5" stroke="rgba(143, 104, 40, 0.7)" stroke-width="1.2"/>
+
+    <!-- Secondary Latency Scale (ms) -->
+    <line x1="162" y1="116.1" x2="158.6" y2="112.4" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="166" y="122" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">0ms</text>
+    <line x1="203.4" y1="89.1" x2="201" y2="84.8" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="207" y="96" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">100</text>
+    <line x1="250.8" y1="74.1" x2="249.9" y2="69.1" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="252" y="81.5" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">200</text>
+    <line x1="300.6" y1="72.8" x2="301.2" y2="67.8" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="300" y="80.5" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">300</text>
+    <line x1="348.6" y1="85.5" x2="351.4" y2="81.2" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="348" y="93.5" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">400</text>
+    <line x1="391" y1="110.5" x2="395.2" y2="107.5" stroke="rgba(24, 23, 20, 0.6)" stroke-width="1.2"/>
+    <text x="385" y="119" fill="rgba(24, 23, 20, 0.65)" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle" dominant-baseline="central">500ms</text>
+
+    <!-- Badging -->
+    <text x="280" y="98" font-family="Georgia, serif" font-weight="900" font-size="20" fill="#1c1b18" text-anchor="middle">FIFO</text>
+    <text x="280" y="118" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" font-size="8.5" fill="rgba(28,27,24,0.75)" letter-spacing="1.5" text-anchor="middle">DAC BUFFER DEPTH</text>
+    <text x="280" y="134" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="7.5" fill="rgba(28,27,24,0.55)" text-anchor="middle">32,768 FRAMES • HARDWARE STREAM QUEUE</text>
+    <text x="280" y="152" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" font-size="8.5" fill="#8f6828" letter-spacing="1.2" text-anchor="middle">ALSA PCM • REAL-TIME DMA BUFFER</text>
+
+    <!-- Needle Assembly (Rotates around 280, 248) -->
+    <g id="needle-group-right" style="transform-origin: 280px 248px; transform: rotate(-41.8deg); transition: transform 0.22s cubic-bezier(0.12, 0.9, 0.25, 1);">
+      <g filter="url(#shadow-right)">
+        <polygon points="276.4,248 279.4,36 280.6,36 283.6,248" fill="#181715"/>
+        <polygon points="278.8,78 279.4,36 280.6,36 281.2,78" fill="#d97706"/>
+        <line x1="280" y1="248" x2="280" y2="265" stroke="#181715" stroke-width="3.2"/>
+        <circle cx="280" cy="265" r="4.2" fill="#181715"/>
+      </g>
+      <circle cx="280" cy="248" r="16" fill="#1e1c18" stroke="#c4974f" stroke-width="2"/>
+      <circle cx="280" cy="248" r="10" fill="#11100e" stroke="#8f6828" stroke-width="1"/>
+      <circle cx="280" cy="248" r="4.5" fill="#c4974f"/>
+    </g>
+  </svg>
+              <div class="channel-engraving">CH 2 • DAC HARDWARE BUFFER DEPTH (%)</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Meter Sub-Bar Telemetry -->
+        <div class="meter-status-bar">
+          <div class="meter-stat-pill">
+            <span class="stat-name">AirPlay Audio Attenuation</span>
+            <span class="stat-readout" id="meter-db-attenuation">--</span>
+          </div>
+          <div class="meter-stat-pill">
+            <span class="stat-name">DAC Hardware Buffer</span>
+            <span class="stat-readout highlight" id="meter-buffer-depth">--</span>
+          </div>
+          <div class="meter-stat-pill">
+            <span class="stat-name">ALSA Hardware Output</span>
+            <span class="stat-readout" id="meter-dac-format">--</span>
+          </div>
+          <div class="meter-stat-pill">
+            <span class="stat-name">Audio Sample Frame Clock</span>
+            <span class="stat-readout mono" id="meter-frame-clock">--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mid-Section: Real NQPTP Grandmaster Clock Jitter Oscilloscope -->
+      <section class="sync-oscilloscope-card">
+        <div class="sync-card-header">
+          <div class="sync-header-left">
+            <div class="sync-title-top">
+              <span class="card-tag">IEEE 1588 PTP PRECISION TIMING</span>
+              <span class="shm-tag">(/dev/shm/nqptp Shared Clock)</span>
+            </div>
+            <h4 class="sync-heading">Grandmaster Clock Jitter & Offset Oscilloscope</h4>
+          </div>
+          <div class="sync-header-pills">
+            <span class="sync-badge" id="sync-ptp-badge">PTP Standby</span>
+            <span class="sync-badge" id="sync-drift-badge">Jitter: --</span>
+          </div>
+        </div>
+
+        <div class="oscilloscope-viewport">
+          <div class="oscilloscope-crt-grid"></div>
+          <div class="osc-axis-label top">+500 µs</div>
+          <div class="osc-axis-label zero">0 µs Reference</div>
+          <div class="osc-axis-label bottom">-500 µs</div>
+          <svg id="oscilloscope-svg" viewBox="0 0 1200 140" width="100%" height="100%">
+            <defs>
+              <filter id="crt-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <line x1="0" y1="70" x2="1200" y2="70" stroke="rgba(80, 225, 255, 0.25)" stroke-width="1.2" stroke-dasharray="4 4"/>
+            <line x1="600" y1="0" x2="600" y2="140" stroke="rgba(80, 225, 255, 0.25)" stroke-width="1.2" stroke-dasharray="4 4"/>
+            <path id="osc-glow-path" d="M 0 70 L 1200 70" fill="none" stroke="rgba(63, 229, 255, 0.5)" stroke-width="5" filter="url(#crt-glow)"/>
+            <path id="osc-core-path" d="M 0 70 L 1200 70" fill="none" stroke="#d5f9ff" stroke-width="2"/>
+            <circle id="osc-head-dot" cx="1200" cy="70" r="4.5" fill="#ffffff" filter="url(#crt-glow)"/>
+          </svg>
+        </div>
+
+        <div class="sync-metrics-ticker">
+          <div class="ticker-box">
+            <span class="t-label">Grandmaster Clock ID</span>
+            <span class="t-val mono" id="sync-shm-val">--</span>
+          </div>
+          <div class="ticker-box">
+            <span class="t-label">PTP Drift Tolerance</span>
+            <span class="t-val" id="sync-drift-val">--</span>
+          </div>
+          <div class="ticker-box">
+            <span class="t-label">Sub-sample Interpolation</span>
+            <span class="t-val highlight" id="sync-interp-val">--</span>
+          </div>
+          <div class="ticker-box">
+            <span class="t-label">AirPlay Stream Buffer</span>
+            <span class="t-val" id="sync-buffer-val">--</span>
+          </div>
+          <div class="ticker-box">
+            <span class="t-label">Live Sync Updates</span>
+            <span class="t-val mono" id="sync-ticks-val">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Grid: Audio Pipeline & Hardware Telemetry -->
+      <div class="diag-bottom-grid">
+
+        <!-- Card 1: Audio Bitstream & Network Transport -->
+        <div class="tech-card">
+          <div class="tech-card-header">
+            <div class="tech-icon stream">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="tech-title">Audio Pipeline & Transport</h4>
+              <p class="tech-desc">AirPlay 2 Synchronized Bitstream</p>
+            </div>
+          </div>
+          <div class="tech-list">
+            <div class="tech-row">
+              <span class="t-k">Incoming Codec / Stream</span>
+              <span class="t-v highlight" id="pipe-codec">--</span>
+            </div>
+            <div class="tech-row">
+              <span class="t-k">ALAC Audio Decoder</span>
+              <span class="t-v" id="pipe-decoder">--</span>
+            </div>
+            <div class="tech-row">
+              <span class="t-k">ALSA Output Endpoint</span>
+              <span class="t-v" id="pipe-alsa">--</span>
+            </div>
+            <div class="tech-row">
+              <span class="t-k">Connected Sender Client</span>
+              <span class="t-v mono" id="pipe-client">--</span>
+            </div>
+            <div class="tech-row">
+              <span class="t-k">PTP Clock Synchronization</span>
+              <span class="t-v" id="pipe-sync-mode">--</span>
+            </div>
+            <div class="tech-row">
+              <span class="t-k">WebSocket RTT Ping</span>
+              <span class="t-v status-ok" id="pipe-ws-ping">-- ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Raspberry Pi Real-Time Hardware Telemetry & Charts -->
+        <div class="tech-card">
+          <div class="tech-card-header">
+            <div class="tech-icon hardware">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+                <rect x="9" y="9" width="6" height="6"/>
+                <line x1="9" y1="1" x2="9" y2="4"/>
+                <line x1="15" y1="1" x2="15" y2="4"/>
+                <line x1="9" y1="20" x2="9" y2="23"/>
+                <line x1="15" y1="20" x2="15" y2="23"/>
+                <line x1="20" y1="9" x2="23" y2="9"/>
+                <line x1="20" y1="14" x2="23" y2="14"/>
+                <line x1="1" y1="9" x2="4" y2="9"/>
+                <line x1="1" y1="14" x2="4" y2="14"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="tech-title">Hardware Telemetry</h4>
+              <p class="tech-desc">Raspberry Pi 4 Model B (4 Cores • aarch64)</p>
+            </div>
+          </div>
+
+          <!-- Sparklines Container -->
+          <div class="hw-sparklines-grid">
+            <div class="hw-sparkline-box">
+              <div class="box-hdr">
+                <span>CPU Load (1m avg)</span>
+                <span id="chart-cpu-val" class="v-bold">--</span>
+              </div>
+              <svg id="svg-chart-cpu" viewBox="0 0 280 44" width="100%" height="44">
+                <defs>
+                  <linearGradient id="cpu-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(255, 159, 10, 0.45)"/>
+                    <stop offset="100%" stop-color="rgba(255, 159, 10, 0.0)"/>
+                  </linearGradient>
+                </defs>
+                <path id="cpu-area" d="M 0 44 L 280 44" fill="url(#cpu-grad)"/>
+                <path id="cpu-line" d="M 0 44 L 280 44" fill="none" stroke="#ff9f0a" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="hw-sparkline-box">
+              <div class="box-hdr">
+                <span>SoC Temperature</span>
+                <span id="chart-temp-val" class="v-bold">--</span>
+              </div>
+              <svg id="svg-chart-temp" viewBox="0 0 280 44" width="100%" height="44">
+                <defs>
+                  <linearGradient id="temp-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(250, 45, 85, 0.45)"/>
+                    <stop offset="100%" stop-color="rgba(250, 45, 85, 0.0)"/>
+                  </linearGradient>
+                </defs>
+                <path id="temp-area" d="M 0 44 L 280 44" fill="url(#temp-grad)"/>
+                <path id="temp-line" d="M 0 44 L 280 44" fill="none" stroke="#fa2d55" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="hw-sparkline-box">
+              <div class="box-hdr">
+                <span>RAM Utilization</span>
+                <span id="chart-mem-val" class="v-bold">--</span>
+              </div>
+              <svg id="svg-chart-mem" viewBox="0 0 280 44" width="100%" height="44">
+                <defs>
+                  <linearGradient id="mem-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(48, 209, 88, 0.45)"/>
+                    <stop offset="100%" stop-color="rgba(48, 209, 88, 0.0)"/>
+                  </linearGradient>
+                </defs>
+                <path id="mem-area" d="M 0 44 L 280 44" fill="url(#mem-grad)"/>
+                <path id="mem-line" d="M 0 44 L 280 44" fill="none" stroke="#30d158" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="hw-footer">
+            <span id="hw-host">Host: airplay</span>
+            <span class="sep">•</span>
+            <span id="hw-uptime">Uptime: --</span>
+            <span class="sep">•</span>
+            <span id="hw-kernel">Kernel: --</span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="/app.js?v=12.0"></script>
+</body>
+</html>
