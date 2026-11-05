@@ -48,7 +48,6 @@ if [ ! -f "$HOME/.config/labwc/autostart" ] || ! grep -q "launch-display.sh" "$H
   chmod +x "$HOME/.config/labwc/autostart"
 fi
 
-cp "$INSTALL_DIR/airplay-dashboard.desktop" "$HOME/.config/autostart/"
 cp "$INSTALL_DIR/airplay-dashboard.desktop" "$HOME/Desktop/"
 chmod +x "$HOME/Desktop/airplay-dashboard.desktop" 2>/dev/null || true
 
