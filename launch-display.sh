@@ -45,15 +45,17 @@ rm -f "/tmp/airplay-dashboard-intentional-quit" 2>/dev/null
 CRASH_COUNT=0
 MAX_CRASHES=3
 
-# 4. Supervised launch loop: only restarts on actual crashes (exit code != 0)
+# 4. Supervised launch loop: forces native Wayland 1920x1080 kiosk mode
 while true; do
   rm -f "$PROFILE_DIR/Singleton*" "$PROFILE_DIR/lockfile" 2>/dev/null
 
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Launching Chromium fullscreen kiosk..."
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Launching Chromium native Wayland 1080p kiosk..."
   /usr/bin/chromium \
+    --ozone-platform=wayland \
+    --kiosk \
     --app=http://127.0.0.1:8080 \
-    --start-maximized \
-    --start-fullscreen \
+    --window-size=1920,1080 \
+    --window-position=0,0 \
     --user-data-dir="$PROFILE_DIR" \
     --no-first-run \
     --no-default-browser-check \

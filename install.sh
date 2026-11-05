@@ -42,10 +42,15 @@ sudo systemctl enable --now airplay-dashboard.service
 
 # 6. Configure Autostart on Boot (labwc / Raspberry Pi OS desktop)
 echo "--> Configuring desktop autostart..."
-mkdir -p "$HOME/.config/labwc" "$HOME/.config/autostart" "$HOME/Desktop"
+mkdir -p "$HOME/.config/labwc" "$HOME/Desktop"
 if [ ! -f "$HOME/.config/labwc/autostart" ] || ! grep -q "launch-display.sh" "$HOME/.config/labwc/autostart"; then
   echo "$INSTALL_DIR/launch-display.sh >/tmp/airplay-dashboard-display.log 2>&1 &" >> "$HOME/.config/labwc/autostart"
   chmod +x "$HOME/.config/labwc/autostart"
+fi
+
+# Ensure labwc maximizes Chromium to full 1080p landscape
+if [ -f "$HOME/.config/labwc/rc.xml" ] && ! grep -q 'identifier="chromium"' "$HOME/.config/labwc/rc.xml"; then
+  sed -i '/<windowRules>/a \    <windowRule identifier="chromium" serverDecoration="no">\n      <action name="Maximize" />\n    </windowRule>\n    <windowRule identifier="chrome-*" serverDecoration="no">\n      <action name="Maximize" />\n    </windowRule>' "$HOME/.config/labwc/rc.xml"
 fi
 
 cp "$INSTALL_DIR/airplay-dashboard.desktop" "$HOME/Desktop/"
