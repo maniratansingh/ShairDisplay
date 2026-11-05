@@ -536,6 +536,29 @@
   }
 
   // ========================================================
+  // Screen Wake Lock (Keeps Display Awake During Playback)
+  // ========================================================
+  let wakeLock = null;
+  async function updateWakeLock(isPlaying) {
+    if (!('wakeLock' in navigator)) return;
+    try {
+      if (isPlaying && !wakeLock) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+      } else if (!isPlaying && wakeLock) {
+        await wakeLock.release();
+        wakeLock = null;
+      }
+    } catch (e) {}
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && playbackData && playbackData.status === 'Playing') {
+      updateWakeLock(true);
+    }
+  });
+
+  // ========================================================
   // Main State Render Loop
   // ========================================================
   function render(state) {
@@ -545,6 +568,8 @@
     playbackData = state.playback || {};
     receiverData = state.receiver || {};
     systemData = state.system || {};
+
+    updateWakeLock(playbackData.status === 'Playing');
 
     // Monotonic client-side anchor for smooth, drift-free 60fps interpolation
     clientPositionAnchorMs = playbackData.positionMs || 0;

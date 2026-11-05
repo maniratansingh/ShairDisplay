@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================
-# AirPlay 2 Music Dashboard — Persistent Display Launcher
+# ShairDisplay — Persistent Kiosk Display Launcher & Supervisor
 # ========================================================
 
 export DISPLAY="${DISPLAY:-:0}"
@@ -10,7 +10,7 @@ export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}"
 LOG_FILE="/tmp/airplay-dashboard-display.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting AirPlay 2 Dashboard display launcher..."
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting ShairDisplay kiosk supervisor..."
 
 # 1. Wait for local dashboard backend service to become ready
 MAX_WAIT=30
@@ -25,27 +25,43 @@ until curl -s -f http://127.0.0.1:8080/api/status >/dev/null 2>&1; do
 done
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Dashboard backend is active and reachable."
 
-# 2. Clean up any stale Chromium profile lock files from previous unclean reboots
 PROFILE_DIR="/tmp/airplay-dashboard-chrome-profile"
 mkdir -p "$PROFILE_DIR"
-rm -f "$PROFILE_DIR/Singleton*" "$PROFILE_DIR/lockfile" 2>/dev/null
 
-# 3. Clean any existing conflicting dashboard browser instances
-pkill -f "airplay-dashboard-chrome-profile" 2>/dev/null
-sleep 1
+# Clear any intentional quit flag from earlier session
+rm -f "/tmp/airplay-dashboard-intentional-quit" 2>/dev/null
 
-# 4. Launch Chromium in dedicated App mode with Fullscreen
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Launching Chromium in fullscreen application mode..."
-exec /usr/bin/chromium \
-  --app=http://127.0.0.1:8080 \
-  --start-maximized \
-  --start-fullscreen \
-  --user-data-dir="$PROFILE_DIR" \
-  --no-first-run \
-  --no-default-browser-check \
-  --disable-session-crashed-bubble \
-  --disable-infobars \
-  --disable-features=Translate \
-  --password-store=basic \
-  --check-for-update-interval=31536000 \
-  --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'
+# 2. Supervisor loop: ensures Chromium auto-respawns on crash or GPU hitch
+while true; do
+  # Clean up stale Chromium lockfiles before every launch (survives sudden power-cuts)
+  rm -f "$PROFILE_DIR/Singleton*" "$PROFILE_DIR/lockfile" 2>/dev/null
+
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Launching Chromium in fullscreen application mode..."
+  /usr/bin/chromium \
+    --app=http://127.0.0.1:8080 \
+    --start-maximized \
+    --start-fullscreen \
+    --user-data-dir="$PROFILE_DIR" \
+    --no-first-run \
+    --no-default-browser-check \
+    --disable-session-crashed-bubble \
+    --disable-infobars \
+    --disable-features=Translate \
+    --password-store=basic \
+    --check-for-update-interval=31536000 \
+    --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'
+
+  EXIT_CODE=$?
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Chromium process ended with exit code $EXIT_CODE."
+
+  # If user intentionally clicked Close or pressed 'Q', respect it and stop supervisor
+  if [ -f "/tmp/airplay-dashboard-intentional-quit" ]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Intentional quit flag detected. Halting display supervisor."
+    rm -f "/tmp/airplay-dashboard-intentional-quit" 2>/dev/null
+    break
+  fi
+
+  # Crash recovery: wait 2 seconds before respawning to prevent high CPU loop
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Display process exited unexpectedly. Auto-recovering in 2 seconds..."
+  sleep 2
+done

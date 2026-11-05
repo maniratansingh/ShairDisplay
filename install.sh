@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 # ========================================================
-# AirPlay Dashboard — 1-Step Automated Installer
+# ShairDisplay — 1-Step Automated Installer
 # ========================================================
 
 set -e
 
 echo "=========================================================="
-echo "  Installing AirPlay 2 Music Display & Diagnostics"
+echo "  Installing ShairDisplay (AirPlay 2 Hi-Fi Display)"
 echo "=========================================================="
 
 INSTALL_DIR="/opt/airplay-dashboard"
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 1. Install required system packages
-echo "--> Installing system packages (Node.js, Python Pillow, wlrctl, xdotool)..."
+echo "--> Installing system packages (Node.js, Python Pillow, wlrctl, xdotool, wlopm)..."
 sudo apt-get update
-sudo apt-get install -y nodejs npm python3-pil wlrctl xdotool curl
+sudo apt-get install -y nodejs npm python3-pil wlrctl xdotool curl wlopm
 
 # 2. Deploy to /opt/airplay-dashboard if not already running there
 if [ "$CURRENT_DIR" != "$INSTALL_DIR" ]; then
@@ -54,7 +54,7 @@ chmod +x "$HOME/Desktop/airplay-dashboard.desktop" 2>/dev/null || true
 
 echo "=========================================================="
 echo "  Installation Complete!"
-echo "  • Backend Service: Active at http://localhost:8080"
-echo "  • Auto-start: Configured on boot"
+echo "  • ShairDisplay Backend: Active at http://localhost:8080"
+echo "  • Display Supervisor: Auto-starts on boot with crash recovery"
 echo "  • To launch right now, run: $INSTALL_DIR/launch-display.sh &"
 echo "=========================================================="

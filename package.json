@@ -1,7 +1,7 @@
 {
-  "name": "airplay-dashboard",
+  "name": "shairdisplay",
   "version": "1.0.0",
-  "description": "Apple Music-inspired AirPlay 2 Dashboard for Raspberry Pi",
+  "description": "AirPlay 2 Hi-Fi Music Display & Precision Diagnostics for Shairport Sync by Mike Brady",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -10,6 +10,23 @@ const dbus = require('dbus-next');
 const PORT = process.env.PORT || 8080;
 const COVERART_DIR = '/tmp/shairport-sync/.cache/coverart';
 
+const EXEC_ENV = {
+  ...process.env,
+  DISPLAY: process.env.DISPLAY || ':0',
+  WAYLAND_DISPLAY: process.env.WAYLAND_DISPLAY || 'wayland-0',
+  XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || '/run/user/1000'
+};
+
+let wasActivePlayback = false;
+function wakeDisplayIfNeeded(isNowPlaying) {
+  if (isNowPlaying && !wasActivePlayback) {
+    const cmd = 'wlopm --on "*" 2>/dev/null || (DISPLAY=:0 xdotool key --window 0 shift 2>/dev/null)';
+    child_process.exec(cmd, { env: EXEC_ENV }, () => {});
+  }
+  wasActivePlayback = isNowPlaying;
+}
+
+
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
@@ -474,6 +491,7 @@ async function pollMetadata() {
         const positionMs = (lengthMs > 0) ? Math.min(lengthMs, Math.max(0, dbusPositionMs)) : Math.max(0, dbusPositionMs);
 
         if ((mprisStatus === 'Playing' || mprisStatus === 'Paused') && title) {
+          wakeDisplayIfNeeded(mprisStatus === 'Playing');
           // Active track (playing or paused) — use D-Bus Position directly as the single source of truth
           state.playback.status = mprisStatus;
           state.playback.title = title;
@@ -483,6 +501,7 @@ async function pollMetadata() {
           lastTrackKey = currentTrackKey;
 
         } else {
+          wakeDisplayIfNeeded(false);
           // Playback stopped or no title — completely clear everything
           if (lastTrackKey !== '') {
             lastTrackKey = '';
@@ -681,12 +700,7 @@ wss.on('connection', (ws) => {
 // ========================================================
 // API: Raspberry Pi Desktop & Window Controls (Minimize / Fullscreen / Close)
 // ========================================================
-const EXEC_ENV = {
-  ...process.env,
-  DISPLAY: ':0',
-  WAYLAND_DISPLAY: 'wayland-0',
-  XDG_RUNTIME_DIR: '/run/user/1000'
-};
+// EXEC_ENV defined at top of file
 
 // Minimize window to Raspberry Pi desktop
 app.post('/api/system/window/minimize', (req, res) => {
@@ -714,14 +728,14 @@ app.post('/api/system/window/restore', (req, res) => {
 
 // Close / stop the dashboard browser display
 app.post('/api/system/window/close', (req, res) => {
-  child_process.exec('pkill -f "airplay-dashboard-chrome-profile"', (err, stdout, stderr) => {
+  child_process.exec('touch /tmp/airplay-dashboard-intentional-quit && pkill -f "airplay-dashboard-chrome-profile"', { env: EXEC_ENV }, (err, stdout, stderr) => {
     res.json({ success: true, action: 'closed' });
   });
 });
 
 // Restart the dashboard display launcher
 app.post('/api/system/window/relaunch', (req, res) => {
-  child_process.exec('/opt/airplay-dashboard/launch-display.sh >/tmp/airplay-dashboard-display.log 2>&1 &', { env: EXEC_ENV }, (err, stdout, stderr) => {
+  child_process.exec('rm -f /tmp/airplay-dashboard-intentional-quit; /opt/airplay-dashboard/launch-display.sh >/tmp/airplay-dashboard-display.log 2>&1 &', { env: EXEC_ENV }, (err, stdout, stderr) => {
     res.json({ success: true, action: 'relaunched' });
   });
 });
