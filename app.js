@@ -800,8 +800,6 @@
             if (elPipeWsPing) elPipeWsPing.textContent = `${wsLatencyMs} ms`;
           } else if (msg.type === 'init' || msg.type === 'state') {
             render(msg.data);
-          } else if (msg.type === 'switch_tab') {
-            switchTab(msg.tab);
           }
         } catch (e) {}
       };
@@ -813,7 +811,15 @@
   // ========================================================
   // Desktop Window Controls & Keyboard Shortcuts
   // ========================================================
+  const isLocalDisplay = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+
   async function triggerWindowAction(action) {
+    if (!isLocalDisplay) {
+      if (action === 'fullscreen') {
+        toggleBrowserFullscreen();
+      }
+      return;
+    }
     try {
       await fetch(`/api/system/window/${action}`, { method: 'POST' });
     } catch (e) {}
@@ -883,28 +889,29 @@
       const isNowPlaying = viewNowPlaying.classList.contains('active');
       switchTab(isNowPlaying ? 'diagnostics' : 'now-playing');
     }
-    // 'm' or 'd' -> Minimize to Desktop
-    else if (key === 'm' || key === 'd') {
-      e.preventDefault();
-      triggerWindowAction('minimize');
-    }
-    // 'q' -> Stop / Close Display
-    else if (key === 'q') {
-      e.preventDefault();
-      triggerWindowAction('close');
-    }
-    // 'f11' -> Fullscreen Toggle
-    else if (e.key === 'F11') {
-      e.preventDefault();
-      toggleBrowserFullscreen();
-      triggerWindowAction('fullscreen');
-    }
-    // 'Escape' -> Exit fullscreen if active
-    else if (e.key === 'Escape') {
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      } else {
+    // Window management shortcuts ONLY apply on the physical Raspberry Pi display
+    if (isLocalDisplay) {
+      if (key === 'm' || key === 'd') {
+        e.preventDefault();
         triggerWindowAction('minimize');
+      } else if (key === 'q') {
+        e.preventDefault();
+        triggerWindowAction('close');
+      } else if (e.key === 'F11') {
+        e.preventDefault();
+        toggleBrowserFullscreen();
+        triggerWindowAction('fullscreen');
+      } else if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        } else {
+          triggerWindowAction('minimize');
+        }
+      }
+    } else {
+      if (e.key === 'F11') {
+        e.preventDefault();
+        toggleBrowserFullscreen();
       }
     }
   });
