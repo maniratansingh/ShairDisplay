@@ -62,7 +62,7 @@ Designed for dedicated 22-inch 1080p desktop monitors, wall-mounted displays, an
 If you already have a Raspberry Pi running `shairport-sync` (AirPlay 2) and want to connect it to an HDMI monitor or TV:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ShairDisplay.git
+git clone https://github.com/maniratansingh/ShairDisplay.git
 cd ShairDisplay
 chmod +x install.sh
 ./install.sh
