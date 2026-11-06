@@ -56,14 +56,6 @@
           </svg>
           <span>Advanced Diagnostics</span>
         </button>
-        <button id="tab-btn-faq" class="nav-tab-btn" role="tab" aria-selected="false" aria-controls="view-faq" data-tab="faq">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          <span>Liquid Glass FAQ</span>
-        </button>
       </nav>
 
       <!-- Right: Playback Status Pill & Window Controls -->
@@ -97,32 +89,6 @@
         </div>
       </div>
     </header>
-
-    <!-- Floating Side Desktop Control Pill (Option on the Side) -->
-    <aside class="side-desktop-panel" id="side-desktop-panel" aria-label="Quick Desktop Switcher">
-      <button class="side-pill-btn" id="side-pill-minimize" title="Minimize to Raspberry Pi Desktop (Shortcut: M or Super+D)">
-        <span class="side-pill-icon">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-        </span>
-        <span class="side-pill-text">Desktop</span>
-        <kbd class="side-pill-kbd">M</kbd>
-      </button>
-      <button class="side-pill-btn" id="side-pill-fullscreen" title="Toggle Fullscreen (Shortcut: F11)">
-        <span class="side-pill-icon">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <polyline points="9 21 3 21 3 15"></polyline>
-            <line x1="21" y1="3" x2="14" y2="10"></line>
-            <line x1="3" y1="21" x2="10" y2="14"></line>
-          </svg>
-        </span>
-        <kbd class="side-pill-kbd">F11</kbd>
-      </button>
-    </aside>
 
     <!-- ======================================================== -->
     <!-- TAB 1: NOW PLAYING (HERO VIEW)                            -->
@@ -174,28 +140,8 @@
             <h3 class="song-album" id="song-album">Connect via Control Center on your Apple device</h3>
           </div>
 
-          <!-- CodeFronts Liquid Glass Audio Player UI (lg-12) -->
-          <div class="lg-12" id="lg-12-root" aria-label="Liquid glass audio player">
-            <div class="lg-12__player">
-              <div class="lg-12__art" id="lg-12-art" aria-hidden="true"></div>
-              <div class="lg-12__body">
-                <p class="lg-12__track" id="lg-12-track" aria-live="polite">AirPlay 2 — Ready to Stream</p>
-                <input class="lg-12__seek" id="lg-12-seek" type="range" min="0" max="100" value="0" aria-label="Seek">
-                <div class="lg-12__times">
-                  <span id="lg-12-cur">0:00</span>
-                  <span id="lg-12-dur">0:00</span>
-                </div>
-                <div class="lg-12__ctrls">
-                  <button class="lg-12__btn" id="lg-12-prev" type="button" aria-label="Previous track">⏮</button>
-                  <button class="lg-12__btn lg-12__btn--play" id="lg-12-play" type="button" aria-label="Play" aria-pressed="false">▶</button>
-                  <button class="lg-12__btn" id="lg-12-next" type="button" aria-label="Next track">⏭</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Legacy Audio Seeking Panel Reference (Preserved for Event Binding) -->
-          <div class="audio-seeking-panel stopped" id="audio-seeking-panel" style="display: none;">
+          <!-- Glossy Audio Seeking / Progress Bar with Moving Progress Ball -->
+          <div class="audio-seeking-panel stopped" id="audio-seeking-panel">
             <div class="progress-bar-container" id="progress-bar-container">
               <div class="progress-track-glass">
                 <div class="progress-fill-glow" id="progress-fill"></div>
@@ -745,68 +691,6 @@
 
       </div>
 
-      <!-- CodeFronts Liquid Glass FAQ Accordion (lg-16) in Diagnostics -->
-      <section class="lg-16" aria-label="Liquid glass architecture accordion" style="margin-top: 32px;">
-        <div class="lg-16__list">
-          <details class="lg-16__item" open>
-            <summary class="lg-16__q">What is Liquid Glass?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">A translucent material that samples and refracts what's behind it — frosted blur plus specular light and, at its richest, real SVG displacement. It's the design language Apple introduced at WWDC 2025.</div>
-            </div>
-          </details>
-          <details class="lg-16__item">
-            <summary class="lg-16__q">Is it good for performance?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">Yes, when disciplined: animate transform/opacity/filter only, cap blur radii, isolate paint with contain/isolation, and reserve boxes for zero CLS. This demo is pure CSS with no bundle.</div>
-            </div>
-          </details>
-          <details class="lg-16__item">
-            <summary class="lg-16__q">Is it accessible?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">Built on native details/summary, so keyboard toggling and disclosure semantics come free. Keep text on a solid-enough tint to hold WCAG contrast over busy backdrops.</div>
-            </div>
-          </details>
-          <details class="lg-16__item">
-            <summary class="lg-16__q">Does it work with Tailwind?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">Completely — the rules map to utilities like backdrop-blur-xl, bg-white/10, ring-1 ring-white/20 and rounded-2xl. Copy-paste, no external dependencies.</div>
-            </div>
-          </details>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Tab 3: Dedicated Liquid Glass FAQ View Panel -->
-    <main id="view-faq" class="view-panel">
-      <section class="lg-16" aria-label="Liquid glass FAQ accordion">
-        <div class="lg-16__list">
-          <details class="lg-16__item" open>
-            <summary class="lg-16__q">What is Liquid Glass?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">A translucent material that samples and refracts what's behind it — frosted blur plus specular light and, at its richest, real SVG displacement. It's the design language Apple introduced at WWDC 2025.</div>
-            </div>
-          </details>
-          <details class="lg-16__item">
-            <summary class="lg-16__q">Is it good for performance?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">Yes, when disciplined: animate transform/opacity/filter only, cap blur radii, isolate paint with contain/isolation, and reserve boxes for zero CLS. This demo is pure CSS with no bundle.</div>
-            </div>
-          </details>
-          <details class="lg-16__item">
-            <summary class="lg-16__q">Is it accessible?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">Built on native details/summary, so keyboard toggling and disclosure semantics come free. Keep text on a solid-enough tint to hold WCAG contrast over busy backdrops.</div>
-            </div>
-          </details>
-          <details class="lg-16__item">
-            <summary class="lg-16__q">Does it work with Tailwind?<span class="lg-16__mk" aria-hidden="true"></span></summary>
-            <div class="lg-16__wrap">
-              <div class="lg-16__a">Completely — the rules map to utilities like backdrop-blur-xl, bg-white/10, ring-1 ring-white/20 and rounded-2xl. Copy-paste, no external dependencies.</div>
-            </div>
-          </details>
-        </div>
-      </section>
     </main>
 
     <!-- Floating Interactive Demo Controller (Active on GitHub Pages or ?demo=true) -->
