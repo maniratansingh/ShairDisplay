@@ -56,6 +56,14 @@
           </svg>
           <span>Advanced Diagnostics</span>
         </button>
+        <button id="tab-btn-faq" class="nav-tab-btn" role="tab" aria-selected="false" aria-controls="view-faq" data-tab="faq">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span>Liquid Glass FAQ</span>
+        </button>
       </nav>
 
       <!-- Right: Playback Status Pill & Window Controls -->
@@ -737,6 +745,68 @@
 
       </div>
 
+      <!-- CodeFronts Liquid Glass FAQ Accordion (lg-16) in Diagnostics -->
+      <section class="lg-16" aria-label="Liquid glass architecture accordion" style="margin-top: 32px;">
+        <div class="lg-16__list">
+          <details class="lg-16__item" open>
+            <summary class="lg-16__q">What is Liquid Glass?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">A translucent material that samples and refracts what's behind it — frosted blur plus specular light and, at its richest, real SVG displacement. It's the design language Apple introduced at WWDC 2025.</div>
+            </div>
+          </details>
+          <details class="lg-16__item">
+            <summary class="lg-16__q">Is it good for performance?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">Yes, when disciplined: animate transform/opacity/filter only, cap blur radii, isolate paint with contain/isolation, and reserve boxes for zero CLS. This demo is pure CSS with no bundle.</div>
+            </div>
+          </details>
+          <details class="lg-16__item">
+            <summary class="lg-16__q">Is it accessible?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">Built on native details/summary, so keyboard toggling and disclosure semantics come free. Keep text on a solid-enough tint to hold WCAG contrast over busy backdrops.</div>
+            </div>
+          </details>
+          <details class="lg-16__item">
+            <summary class="lg-16__q">Does it work with Tailwind?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">Completely — the rules map to utilities like backdrop-blur-xl, bg-white/10, ring-1 ring-white/20 and rounded-2xl. Copy-paste, no external dependencies.</div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Tab 3: Dedicated Liquid Glass FAQ View Panel -->
+    <main id="view-faq" class="view-panel">
+      <section class="lg-16" aria-label="Liquid glass FAQ accordion">
+        <div class="lg-16__list">
+          <details class="lg-16__item" open>
+            <summary class="lg-16__q">What is Liquid Glass?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">A translucent material that samples and refracts what's behind it — frosted blur plus specular light and, at its richest, real SVG displacement. It's the design language Apple introduced at WWDC 2025.</div>
+            </div>
+          </details>
+          <details class="lg-16__item">
+            <summary class="lg-16__q">Is it good for performance?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">Yes, when disciplined: animate transform/opacity/filter only, cap blur radii, isolate paint with contain/isolation, and reserve boxes for zero CLS. This demo is pure CSS with no bundle.</div>
+            </div>
+          </details>
+          <details class="lg-16__item">
+            <summary class="lg-16__q">Is it accessible?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">Built on native details/summary, so keyboard toggling and disclosure semantics come free. Keep text on a solid-enough tint to hold WCAG contrast over busy backdrops.</div>
+            </div>
+          </details>
+          <details class="lg-16__item">
+            <summary class="lg-16__q">Does it work with Tailwind?<span class="lg-16__mk" aria-hidden="true"></span></summary>
+            <div class="lg-16__wrap">
+              <div class="lg-16__a">Completely — the rules map to utilities like backdrop-blur-xl, bg-white/10, ring-1 ring-white/20 and rounded-2xl. Copy-paste, no external dependencies.</div>
+            </div>
+          </details>
+        </div>
+      </section>
     </main>
 
     <!-- Floating Interactive Demo Controller (Active on GitHub Pages or ?demo=true) -->

@@ -10,8 +10,10 @@
   // Navigation Tab Elements
   const tabBtnNowPlaying = document.getElementById('tab-btn-now-playing');
   const tabBtnDiagnostics = document.getElementById('tab-btn-diagnostics');
+  const tabBtnFaq = document.getElementById('tab-btn-faq');
   const viewNowPlaying = document.getElementById('view-now-playing');
   const viewDiagnostics = document.getElementById('view-diagnostics');
+  const viewFaq = document.getElementById('view-faq');
 
   // Header Elements
   const elAmbientBackdrop = document.getElementById('ambient-backdrop');
@@ -118,25 +120,35 @@
   // Tab Switching
   // ========================================================
   function switchTab(tabId) {
-    if (tabId === 'now-playing') {
-      tabBtnNowPlaying.classList.add('active');
-      tabBtnNowPlaying.setAttribute('aria-selected', 'true');
-      tabBtnDiagnostics.classList.remove('active');
-      tabBtnDiagnostics.setAttribute('aria-selected', 'false');
-      viewNowPlaying.classList.add('active');
-      viewDiagnostics.classList.remove('active');
-    } else {
-      tabBtnDiagnostics.classList.add('active');
-      tabBtnDiagnostics.setAttribute('aria-selected', 'true');
-      tabBtnNowPlaying.classList.remove('active');
-      tabBtnNowPlaying.setAttribute('aria-selected', 'false');
-      viewDiagnostics.classList.add('active');
-      viewNowPlaying.classList.remove('active');
-    }
+    const tabs = [
+      { id: 'now-playing', btn: tabBtnNowPlaying, view: viewNowPlaying },
+      { id: 'diagnostics', btn: tabBtnDiagnostics, view: viewDiagnostics },
+      { id: 'faq', btn: tabBtnFaq, view: viewFaq }
+    ];
+
+    tabs.forEach(t => {
+      if (t.btn && t.view) {
+        const isActive = t.id === tabId;
+        t.btn.classList.toggle('active', isActive);
+        t.btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        t.view.classList.toggle('active', isActive);
+      }
+    });
   }
 
-  tabBtnNowPlaying.addEventListener('click', () => switchTab('now-playing'));
-  tabBtnDiagnostics.addEventListener('click', () => switchTab('diagnostics'));
+  if (tabBtnNowPlaying) tabBtnNowPlaying.addEventListener('click', () => switchTab('now-playing'));
+  if (tabBtnDiagnostics) tabBtnDiagnostics.addEventListener('click', () => switchTab('diagnostics'));
+  if (tabBtnFaq) tabBtnFaq.addEventListener('click', () => switchTab('faq'));
+
+  const initialParams = new URLSearchParams(window.location.search);
+  if (initialParams.get('tab')) {
+    switchTab(initialParams.get('tab'));
+  } else if (window.location.hash) {
+    const hashTab = window.location.hash.replace('#', '');
+    if (['now-playing', 'diagnostics', 'faq'].includes(hashTab)) {
+      switchTab(hashTab);
+    }
+  }
 
   // ========================================================
   // Helpers
@@ -1004,6 +1016,8 @@
             render(msg.data);
           } else if (msg.type === 'reload') {
             location.reload();
+          } else if (msg.type === 'switchTab') {
+            switchTab(msg.tab);
           }
         } catch (e) {}
       };
@@ -1039,6 +1053,8 @@
             render(msg.data);
           } else if (msg.type === 'reload') {
             location.reload();
+          } else if (msg.type === 'switchTab') {
+            switchTab(msg.tab);
           }
         } catch (e) {}
       };
@@ -1151,10 +1167,19 @@
     else if (key === '2') {
       switchTab('diagnostics');
     }
+    // '3' or 'f' -> Tab 3 (Liquid Glass FAQ)
+    else if (key === '3' || key === 'f') {
+      switchTab('faq');
+    }
     // 't' -> Toggle Tab
     else if (key === 't') {
-      const isNowPlaying = viewNowPlaying.classList.contains('active');
-      switchTab(isNowPlaying ? 'diagnostics' : 'now-playing');
+      if (viewNowPlaying.classList.contains('active')) {
+        switchTab('diagnostics');
+      } else if (viewDiagnostics.classList.contains('active')) {
+        switchTab('faq');
+      } else {
+        switchTab('now-playing');
+      }
     }
     // 'r' -> Reload UI
     else if (key === 'r') {

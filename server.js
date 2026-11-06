@@ -766,6 +766,17 @@ app.post('/api/system/window/reload', (req, res) => {
   res.json({ success: true, action: 'reloaded' });
 });
 
+// Broadcast tab switch to all connected frontend clients
+app.post('/api/system/tab/:tabId', (req, res) => {
+  const payload = JSON.stringify({ type: 'switchTab', tab: req.params.tabId });
+  for (const client of wss.clients) {
+    if (client.readyState === 1) { // WebSocket.OPEN
+      try { client.send(payload); } catch (e) {}
+    }
+  }
+  res.json({ success: true, tab: req.params.tabId });
+});
+
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, 'public')));
 
