@@ -354,8 +354,11 @@ function getAlsaHardwareStatus() {
   return { running: false, card: null, hwPtr: 0, delayFrames: 0, bufferPercent: 0, bufferMs: 0, xrun: false };
 }
 
-// Track key for detecting new songs
+// Track key and monotonic progression state
 let lastTrackKey = '';
+let trackPlaybackStartTime = 0;
+let lastKnownValidPositionMs = 0;
+let lastPositionClockTime = 0;
 
 // Helper: populate metadata fields into state.playback from D-Bus meta object
 function fillMetadata(meta, allProps, now, lengthMs, resolveArtworkPath, extractPaletteFromImage) {
@@ -485,38 +488,78 @@ async function pollMetadata() {
         }
 
         const now = Date.now();
-        const currentTrackKey = `${title}:::${meta['xesam:artist'] || ''}:::${lengthMs}`;
-
-        // Monotonic progression guard: never let position snap backward to 0 or stale metadata during active playback
-        let positionMs = dbusPositionMs;
-        if (currentTrackKey === lastTrackKey && mprisStatus === 'Playing' && state.playback.positionMs > 0) {
-          if (positionMs === 0 || (positionMs < state.playback.positionMs && (state.playback.positionMs - positionMs) < 60000)) {
-            const elapsed = Math.max(0, now - (state.playback.positionUpdatedAt || now));
-            positionMs = Math.min(lengthMs, state.playback.positionMs + elapsed);
-          }
-        }
-        if (lengthMs > 0) {
-          positionMs = Math.min(lengthMs, Math.max(0, positionMs));
-        } else {
-          positionMs = Math.max(0, positionMs);
-        }
+        const normTitle = (title || '').trim().toLowerCase();
+        const normAlbum = (meta['xesam:album'] || '').trim().toLowerCase();
+        const currentTrackKey = normTitle ? `${normTitle}:::${normAlbum}` : '';
 
         if ((mprisStatus === 'Playing' || mprisStatus === 'Paused') && title) {
           wakeDisplayIfNeeded(mprisStatus === 'Playing');
-          // Active track (playing or paused) — use D-Bus Position directly as the single source of truth
+
+          if (currentTrackKey !== lastTrackKey || !lastTrackKey) {
+            // New track detected
+            lastTrackKey = currentTrackKey;
+            trackPlaybackStartTime = now;
+            lastKnownValidPositionMs = (dbusPositionMs > 0) ? dbusPositionMs : 0;
+            lastPositionClockTime = now;
+          } else if (mprisStatus === 'Playing') {
+            const clockElapsed = Math.max(0, now - (lastPositionClockTime || now));
+
+            if (dbusPositionMs > 1000) {
+              if (dbusPositionMs < lastKnownValidPositionMs - 3000) {
+                // Legitimate user scrub backwards to an earlier point in the song
+                lastKnownValidPositionMs = dbusPositionMs;
+              } else if (dbusPositionMs >= lastKnownValidPositionMs - 1500) {
+                // Normal advancing D-Bus position
+                lastKnownValidPositionMs = dbusPositionMs;
+              } else {
+                // Minor negative jitter (< 1.5s): smoothly interpolate forward
+                lastKnownValidPositionMs += clockElapsed;
+              }
+            } else {
+              // dbusPositionMs is 0 or <= 1000ms
+              if (lastKnownValidPositionMs > 2000) {
+                // ANOMALOUS ZERO DROP from D-Bus/Shairport Sync:
+                // NEVER reset to zero! Advance smoothly with wall-clock time.
+                lastKnownValidPositionMs += clockElapsed;
+              } else {
+                // Track is within its first 2 seconds
+                if (dbusPositionMs > 0) {
+                  lastKnownValidPositionMs = dbusPositionMs;
+                } else {
+                  lastKnownValidPositionMs = Math.max(0, now - trackPlaybackStartTime);
+                }
+              }
+            }
+            lastPositionClockTime = now;
+          } else {
+            // Paused: hold position steady
+            lastPositionClockTime = now;
+            if (dbusPositionMs > 0) {
+              lastKnownValidPositionMs = dbusPositionMs;
+            }
+          }
+
+          if (lengthMs > 0) {
+            lastKnownValidPositionMs = Math.min(lengthMs, Math.max(0, lastKnownValidPositionMs));
+          } else {
+            lastKnownValidPositionMs = Math.max(0, lastKnownValidPositionMs);
+          }
+
+          const positionMs = Math.round(lastKnownValidPositionMs);
+
           state.playback.status = mprisStatus;
           state.playback.title = title;
           state.playback.positionMs = positionMs;
 
           fillMetadata(meta, allProps, now, lengthMs, resolveArtworkPath, extractPaletteFromImage);
-          lastTrackKey = currentTrackKey;
 
         } else {
           wakeDisplayIfNeeded(false);
-          // Playback stopped or no title — completely clear everything
-          if (lastTrackKey !== '') {
-            lastTrackKey = '';
-          }
+          lastTrackKey = '';
+          trackPlaybackStartTime = 0;
+          lastKnownValidPositionMs = 0;
+          lastPositionClockTime = now;
+
           state.playback.status = 'Stopped';
           state.playback.title = '';
           state.playback.artist = '';

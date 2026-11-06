@@ -310,6 +310,9 @@
       playbackData.hasArtwork = false;
     }
     resetProgressUI();
+    clientPositionAnchorMs = 0;
+    clientPositionAnchorTime = 0;
+    lastKnownTrackKey = '';
     renderStandbyUI();
   }
 
@@ -318,12 +321,16 @@
   let lastKnownTrackKey = '';
 
   function updateProgress() {
-    if (playbackData && playbackData.status === 'Playing' && playbackData.durationMs > 0) {
+    if (playbackData && playbackData.status === 'Playing') {
       const nowPerf = performance.now();
       const elapsed = Math.max(0, nowPerf - (clientPositionAnchorTime || nowPerf));
-      // D-Bus Position is the single source of truth; interpolate forward at 1x speed
-      const currentPosition = Math.min(playbackData.durationMs, clientPositionAnchorMs + elapsed);
-      const percent = Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100));
+      const hasDuration = typeof playbackData.durationMs === 'number' && playbackData.durationMs > 0;
+      const currentPosition = hasDuration
+        ? Math.min(playbackData.durationMs, clientPositionAnchorMs + elapsed)
+        : (clientPositionAnchorMs + elapsed);
+      const percent = hasDuration
+        ? Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100))
+        : 0;
 
       if (elAudioSeekingPanel) {
         elAudioSeekingPanel.classList.remove('stopped');
@@ -332,10 +339,10 @@
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
-      elTimeDuration.textContent = formatTime(playbackData.durationMs);
+      elTimeDuration.textContent = hasDuration ? formatTime(playbackData.durationMs) : '--:--';
       if (elProgressBarContainer) {
         elProgressBarContainer.setAttribute('aria-valuenow', Math.round(percent).toString());
-        elProgressBarContainer.setAttribute('aria-valuetext', `${formatTime(currentPosition)} of ${formatTime(playbackData.durationMs)}`);
+        elProgressBarContainer.setAttribute('aria-valuetext', `${formatTime(currentPosition)} of ${hasDuration ? formatTime(playbackData.durationMs) : 'stream'}`);
       }
 
       // Frame Clock: Hardware sample count
@@ -346,10 +353,14 @@
       }
 
       animFrameId = requestAnimationFrame(updateProgress);
-    } else if (playbackData && playbackData.status === 'Paused' && playbackData.durationMs > 0) {
-      // While paused: show exact D-Bus position, no interpolation
-      const currentPosition = Math.min(playbackData.durationMs, Math.max(0, playbackData.positionMs || 0));
-      const percent = Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100));
+    } else if (playbackData && playbackData.status === 'Paused') {
+      const hasDuration = typeof playbackData.durationMs === 'number' && playbackData.durationMs > 0;
+      const currentPosition = hasDuration
+        ? Math.min(playbackData.durationMs, Math.max(0, playbackData.positionMs || 0))
+        : Math.max(0, playbackData.positionMs || 0);
+      const percent = hasDuration
+        ? Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100))
+        : 0;
 
       if (elAudioSeekingPanel) {
         elAudioSeekingPanel.classList.remove('stopped');
@@ -358,11 +369,7 @@
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
-      elTimeDuration.textContent = formatTime(playbackData.durationMs);
-      if (elProgressBarContainer) {
-        elProgressBarContainer.setAttribute('aria-valuenow', Math.round(percent).toString());
-        elProgressBarContainer.setAttribute('aria-valuetext', `${formatTime(currentPosition)} of ${formatTime(playbackData.durationMs)}`);
-      }
+      elTimeDuration.textContent = hasDuration ? formatTime(playbackData.durationMs) : '--:--';
     } else {
       resetProgressUI();
     }
@@ -607,10 +614,12 @@
 
     updateWakeLock(playbackData.status === 'Playing');
 
-    // Monotonic client-side anchor with regression guard
-    // Never snaps backward to 0:00 or stale 60s metadata chunks during active playback
-    const currentTrackKey = `${playbackData.title || ''}:::${playbackData.artist || ''}:::${playbackData.durationMs || 0}`;
-    const incomingPos = playbackData.positionMs || 0;
+    // Monotonic client-side anchor with anti-jump regression guard
+    // Never snaps backward to 0:00 or restarts from 0:01 during active playback
+    const normTitle = (playbackData.title || '').trim().toLowerCase();
+    const normAlbum = (playbackData.album || '').trim().toLowerCase();
+    const currentTrackKey = normTitle ? `${normTitle}:::${normAlbum}` : '';
+    const incomingPos = Math.max(0, playbackData.positionMs || 0);
     const nowPerf = performance.now();
 
     if (currentTrackKey !== lastKnownTrackKey || !lastKnownTrackKey) {
@@ -620,10 +629,17 @@
     } else if (playbackData.status === 'Playing') {
       const currentInterpolated = clientPositionAnchorMs + Math.max(0, nowPerf - (clientPositionAnchorTime || nowPerf));
       const delta = incomingPos - currentInterpolated;
-      // Resync anchor only if:
-      // 1. Incoming position is advancing (delta >= -300ms)
-      // 2. OR user deliberately scrubbed backwards in Apple Music (delta < -3000ms)
-      if (delta >= -300 || delta < -3000) {
+
+      // Anti-jump regression guard:
+      // If the track has been playing for > 2.5s, never accept 0 or <1000ms glitch!
+      if (incomingPos <= 1000 && currentInterpolated > 2500) {
+        // Discard 0-reset glitch from D-Bus/network jitter, continue interpolating smoothly
+      } else if (incomingPos > 1000 && delta < -3000) {
+        // Deliberate user scrub backwards in Apple Music to a valid timestamp
+        clientPositionAnchorMs = incomingPos;
+        clientPositionAnchorTime = nowPerf;
+      } else if (Math.abs(delta) > 500) {
+        // Smooth drift correction (drift exceeds 500ms)
         clientPositionAnchorMs = incomingPos;
         clientPositionAnchorTime = nowPerf;
       }

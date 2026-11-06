@@ -16,7 +16,7 @@ export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}"
 
 LOG_FILE="/tmp/airplay-dashboard-display.log"
-exec > >(tee "$LOG_FILE") 2>&1
+exec >> "$LOG_FILE" 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting ShairDisplay kiosk launcher..."
 

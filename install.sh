@@ -42,9 +42,9 @@ sudo systemctl enable --now airplay-dashboard.service
 
 # 6. Configure Autostart on Boot (labwc / Raspberry Pi OS desktop)
 echo "--> Configuring desktop autostart..."
-mkdir -p "$HOME/.config/labwc" "$HOME/Desktop"
+mkdir -p "$HOME/.config/labwc" "$HOME/Desktop" "$HOME/.config/autostart"
 if [ ! -f "$HOME/.config/labwc/autostart" ] || ! grep -q "launch-display.sh" "$HOME/.config/labwc/autostart"; then
-  echo "$INSTALL_DIR/launch-display.sh >/tmp/airplay-dashboard-display.log 2>&1 &" >> "$HOME/.config/labwc/autostart"
+  echo "/bin/bash $INSTALL_DIR/launch-display.sh >/dev/null 2>&1 &" >> "$HOME/.config/labwc/autostart"
   chmod +x "$HOME/.config/labwc/autostart"
 fi
 
@@ -55,6 +55,8 @@ fi
 
 cp "$INSTALL_DIR/airplay-dashboard.desktop" "$HOME/Desktop/"
 chmod +x "$HOME/Desktop/airplay-dashboard.desktop" 2>/dev/null || true
+cp "$INSTALL_DIR/airplay-dashboard.desktop" "$HOME/.config/autostart/"
+chmod +x "$HOME/.config/autostart/airplay-dashboard.desktop" 2>/dev/null || true
 
 echo "=========================================================="
 echo "  Installation Complete!"
