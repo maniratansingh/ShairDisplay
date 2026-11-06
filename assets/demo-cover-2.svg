@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090514"/>
+      <stop offset="50%" stop-color="#180b33"/>
+      <stop offset="100%" stop-color="#05030a"/>
+    </linearGradient>
+    <radialGradient id="neonGlow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#7928ca" stop-opacity="0.65"/>
+      <stop offset="85%" stop-color="#00f2fe" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="crossGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#ff007f"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="16" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Deep Background -->
+  <rect width="600" height="600" fill="url(#bgGrad)"/>
+  <circle cx="300" cy="270" r="240" fill="url(#neonGlow)"/>
+
+  <!-- Geometric Synthwave Prism Core -->
+  <g transform="translate(300, 270)" filter="url(#glow)">
+    <!-- Outer Diamond Ring -->
+    <polygon points="0,-140 140,0 0,140 -140,0" fill="none" stroke="url(#crossGrad)" stroke-width="4" stroke-opacity="0.9"/>
+    <!-- Inner Diamond -->
+    <polygon points="0,-95 95,0 0,95 -95,0" fill="rgba(255, 0, 127, 0.25)" stroke="#00f2fe" stroke-width="2.5"/>
+    <!-- Core Cross -->
+    <line x1="-55" y1="0" x2="55" y2="0" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="-55" x2="0" y2="55" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="14" fill="#ffffff" filter="drop-shadow(0 0 10px #ff007f)"/>
+  </g>
+
+  <!-- Horizon Grid Rays -->
+  <g opacity="0.35" stroke="#00f2fe" stroke-width="1.2">
+    <line x1="120" y1="460" x2="300" y2="340"/>
+    <line x1="210" y1="460" x2="300" y2="340"/>
+    <line x1="300" y1="460" x2="300" y2="340"/>
+    <line x1="390" y1="460" x2="300" y2="340"/>
+    <line x1="480" y1="460" x2="300" y2="340"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="300" y="505" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="28" font-weight="900" letter-spacing="9" fill="#ffffff" text-anchor="middle">NEON VELOCITY</text>
+  <text x="300" y="535" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="13" font-weight="700" letter-spacing="4" fill="#00f2fe" text-anchor="middle">SYNTHWAVE • HI-RES LOSSLESS</text>
+</svg>

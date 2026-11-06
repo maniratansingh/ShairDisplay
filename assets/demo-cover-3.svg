@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <linearGradient id="warmBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#140b08"/>
+      <stop offset="45%" stop-color="#2a1209"/>
+      <stop offset="85%" stop-color="#0a0503"/>
+      <stop offset="100%" stop-color="#040201"/>
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffb347"/>
+      <stop offset="35%" stop-color="#ff7b25"/>
+      <stop offset="70%" stop-color="#8b1e0f"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe600"/>
+      <stop offset="100%" stop-color="#ff2a6d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Deep Canvas -->
+  <rect width="600" height="600" fill="url(#warmBg)"/>
+  
+  <!-- Ambient Sun Sphere -->
+  <circle cx="300" cy="260" r="190" fill="url(#sunGlow)"/>
+
+  <!-- Concentric Vinyl Grooves -->
+  <circle cx="300" cy="260" r="160" fill="none" stroke="rgba(255, 230, 0, 0.25)" stroke-width="1.5"/>
+  <circle cx="300" cy="260" r="130" fill="none" stroke="rgba(255, 123, 37, 0.35)" stroke-width="1.5"/>
+  <circle cx="300" cy="260" r="100" fill="none" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2"/>
+  <circle cx="300" cy="260" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="3"/>
+  <circle cx="300" cy="260" r="30" fill="#ffb347"/>
+  <circle cx="300" cy="260" r="8" fill="#140b08"/>
+
+  <!-- Organic Wave Lines -->
+  <path d="M60 410 Q 180 370 300 410 T 540 410" fill="none" stroke="rgba(255, 179, 71, 0.45)" stroke-width="2"/>
+  <path d="M80 435 Q 190 400 300 435 T 520 435" fill="none" stroke="rgba(255, 123, 37, 0.35)" stroke-width="1.8"/>
+
+  <!-- Typography -->
+  <text x="300" y="505" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="28" font-weight="900" letter-spacing="8" fill="#ffffff" text-anchor="middle">SOLAR ECHOES</text>
+  <text x="300" y="535" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-size="13" font-weight="700" letter-spacing="4" fill="#ffb347" text-anchor="middle">ANALOGUE WARMTH • MASTER AUDIO</text>
+</svg>
