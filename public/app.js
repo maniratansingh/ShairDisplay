@@ -998,18 +998,18 @@
   // ========================================================
   const DEMO_TRACKS = [
     {
-      title: "So Swaezy",
-      artist: "Yo Yo Honey Singh & Hommie Dilliwala",
-      album: "So Swaezy - Single",
-      genre: "Worldwide • Hip-Hop",
+      title: "Acoustic Horizon",
+      artist: "ShairDisplay Studio",
+      album: "High Fidelity Sessions Vol. 1",
+      genre: "Audiophile Acoustic",
       trackNumber: 1,
-      durationMs: 204754,
-      positionMs: 38400,
-      artworkUrl: "assets/demo-cover-1.jpg",
+      durationMs: 215000,
+      positionMs: 42000,
+      artworkUrl: "assets/demo-cover-1.svg",
       colors: {
-        primary: "rgb(189, 112, 43)",
-        ambient: "rgba(189, 112, 43, 0.45)",
-        glow: "rgba(189, 112, 43, 0.65)"
+        primary: "rgb(245, 158, 11)",
+        ambient: "rgba(245, 158, 11, 0.45)",
+        glow: "rgba(251, 191, 36, 0.65)"
       },
       volume: 0.82,
       airplayVolumeDb: -9.0,
@@ -1019,8 +1019,8 @@
     },
     {
       title: "Neon Velocity",
-      artist: "The Midnight & Kavinsky",
-      album: "Endless Summer Nights",
+      artist: "Cyberwave Collective",
+      album: "Analog Dreams & Neon Lights",
       genre: "Synthwave",
       trackNumber: 4,
       durationMs: 278000,
@@ -1039,8 +1039,8 @@
     },
     {
       title: "Solar Echoes",
-      artist: "Nigel Stanford & Ludovico Einaudi",
-      album: "Solar Echoes (Audiophile Remaster)",
+      artist: "Nordic Soundscapes",
+      album: "Warm Ambient Resonance",
       genre: "Ambient Classical",
       trackNumber: 2,
       durationMs: 342000,
