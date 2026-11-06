@@ -206,6 +206,7 @@
     document.documentElement.style.setProperty('--artwork-ambient', 'rgba(255, 255, 255, 0.04)');
     document.documentElement.style.setProperty('--artwork-glow', 'rgba(255, 255, 255, 0.08)');
     if (elAmbientBackdrop) elAmbientBackdrop.style.backgroundImage = 'none';
+    document.documentElement.style.setProperty('--backdrop-art-url', 'none');
   }
 
   // ========================================================
@@ -238,6 +239,7 @@
       imgCurrent.classList.remove('active');
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.remove('active');
       if (elAmbientBackdrop) elAmbientBackdrop.style.backgroundImage = `url("${newUrl}")`;
+      document.documentElement.style.setProperty('--backdrop-art-url', `url("${newUrl}")`);
     };
     tempImg.onerror = () => {
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.add('active');
