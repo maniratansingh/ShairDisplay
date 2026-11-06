@@ -124,8 +124,8 @@
     }
   }
 
-  tabBtnNowPlaying.addEventListener('click', () => switchTab('now-playing'));
-  tabBtnDiagnostics.addEventListener('click', () => switchTab('diagnostics'));
+  if (tabBtnNowPlaying) tabBtnNowPlaying.addEventListener('click', () => switchTab('now-playing'));
+  if (tabBtnDiagnostics) tabBtnDiagnostics.addEventListener('click', () => switchTab('diagnostics'));
 
   // ========================================================
   // Helpers
@@ -206,6 +206,7 @@
     document.documentElement.style.setProperty('--artwork-ambient', 'rgba(255, 255, 255, 0.04)');
     document.documentElement.style.setProperty('--artwork-glow', 'rgba(255, 255, 255, 0.08)');
     if (elAmbientBackdrop) elAmbientBackdrop.style.backgroundImage = 'none';
+    document.documentElement.style.setProperty('--backdrop-art-url', 'none');
   }
 
   // ========================================================
@@ -238,6 +239,7 @@
       imgCurrent.classList.remove('active');
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.remove('active');
       if (elAmbientBackdrop) elAmbientBackdrop.style.backgroundImage = `url("${newUrl}")`;
+      document.documentElement.style.setProperty('--backdrop-art-url', `url("${newUrl}")`);
     };
     tempImg.onerror = () => {
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.add('active');
@@ -265,6 +267,10 @@
     elProgressKnob.style.left = '0%';
     elTimeElapsed.textContent = '0:00';
     elTimeDuration.textContent = '0:00';
+    if (elProgressBarContainer) {
+      elProgressBarContainer.setAttribute('aria-valuenow', '0');
+      elProgressBarContainer.setAttribute('aria-valuetext', '0:00 of 0:00');
+    }
     if (elMeterFrameClock) elMeterFrameClock.textContent = '0 frames';
   }
 
@@ -304,6 +310,9 @@
       playbackData.hasArtwork = false;
     }
     resetProgressUI();
+    clientPositionAnchorMs = 0;
+    clientPositionAnchorTime = 0;
+    lastKnownTrackKey = '';
     renderStandbyUI();
   }
 
@@ -312,12 +321,16 @@
   let lastKnownTrackKey = '';
 
   function updateProgress() {
-    if (playbackData && playbackData.status === 'Playing' && playbackData.durationMs > 0) {
+    if (playbackData && playbackData.status === 'Playing') {
       const nowPerf = performance.now();
       const elapsed = Math.max(0, nowPerf - (clientPositionAnchorTime || nowPerf));
-      // D-Bus Position is the single source of truth; interpolate forward at 1x speed
-      const currentPosition = Math.min(playbackData.durationMs, clientPositionAnchorMs + elapsed);
-      const percent = Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100));
+      const hasDuration = typeof playbackData.durationMs === 'number' && playbackData.durationMs > 0;
+      const currentPosition = hasDuration
+        ? Math.min(playbackData.durationMs, clientPositionAnchorMs + elapsed)
+        : (clientPositionAnchorMs + elapsed);
+      const percent = hasDuration
+        ? Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100))
+        : 0;
 
       if (elAudioSeekingPanel) {
         elAudioSeekingPanel.classList.remove('stopped');
@@ -326,7 +339,11 @@
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
-      elTimeDuration.textContent = formatTime(playbackData.durationMs);
+      elTimeDuration.textContent = hasDuration ? formatTime(playbackData.durationMs) : '--:--';
+      if (elProgressBarContainer) {
+        elProgressBarContainer.setAttribute('aria-valuenow', Math.round(percent).toString());
+        elProgressBarContainer.setAttribute('aria-valuetext', `${formatTime(currentPosition)} of ${hasDuration ? formatTime(playbackData.durationMs) : 'stream'}`);
+      }
 
       // Frame Clock: Hardware sample count
       if (elMeterFrameClock && receiverData && receiverData.alsaRunning) {
@@ -336,10 +353,14 @@
       }
 
       animFrameId = requestAnimationFrame(updateProgress);
-    } else if (playbackData && playbackData.status === 'Paused' && playbackData.durationMs > 0) {
-      // While paused: show exact D-Bus position, no interpolation
-      const currentPosition = Math.min(playbackData.durationMs, Math.max(0, playbackData.positionMs || 0));
-      const percent = Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100));
+    } else if (playbackData && playbackData.status === 'Paused') {
+      const hasDuration = typeof playbackData.durationMs === 'number' && playbackData.durationMs > 0;
+      const currentPosition = hasDuration
+        ? Math.min(playbackData.durationMs, Math.max(0, playbackData.positionMs || 0))
+        : Math.max(0, playbackData.positionMs || 0);
+      const percent = hasDuration
+        ? Math.min(100, Math.max(0, (currentPosition / playbackData.durationMs) * 100))
+        : 0;
 
       if (elAudioSeekingPanel) {
         elAudioSeekingPanel.classList.remove('stopped');
@@ -348,7 +369,7 @@
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
-      elTimeDuration.textContent = formatTime(playbackData.durationMs);
+      elTimeDuration.textContent = hasDuration ? formatTime(playbackData.durationMs) : '--:--';
     } else {
       resetProgressUI();
     }
@@ -593,10 +614,12 @@
 
     updateWakeLock(playbackData.status === 'Playing');
 
-    // Monotonic client-side anchor with regression guard
-    // Never snaps backward to 0:00 or stale 60s metadata chunks during active playback
-    const currentTrackKey = `${playbackData.title || ''}:::${playbackData.artist || ''}:::${playbackData.durationMs || 0}`;
-    const incomingPos = playbackData.positionMs || 0;
+    // Monotonic client-side anchor with anti-jump regression guard
+    // Never snaps backward to 0:00 or restarts from 0:01 during active playback
+    const normTitle = (playbackData.title || '').trim().toLowerCase();
+    const normAlbum = (playbackData.album || '').trim().toLowerCase();
+    const currentTrackKey = normTitle ? `${normTitle}:::${normAlbum}` : '';
+    const incomingPos = Math.max(0, playbackData.positionMs || 0);
     const nowPerf = performance.now();
 
     if (currentTrackKey !== lastKnownTrackKey || !lastKnownTrackKey) {
@@ -606,10 +629,17 @@
     } else if (playbackData.status === 'Playing') {
       const currentInterpolated = clientPositionAnchorMs + Math.max(0, nowPerf - (clientPositionAnchorTime || nowPerf));
       const delta = incomingPos - currentInterpolated;
-      // Resync anchor only if:
-      // 1. Incoming position is advancing (delta >= -300ms)
-      // 2. OR user deliberately scrubbed backwards in Apple Music (delta < -3000ms)
-      if (delta >= -300 || delta < -3000) {
+
+      // Anti-jump regression guard:
+      // If the track has been playing for > 2.5s, never accept 0 or <1000ms glitch!
+      if (incomingPos <= 1000 && currentInterpolated > 2500) {
+        // Discard 0-reset glitch from D-Bus/network jitter, continue interpolating smoothly
+      } else if (incomingPos > 1000 && delta < -3000) {
+        // Deliberate user scrub backwards in Apple Music to a valid timestamp
+        clientPositionAnchorMs = incomingPos;
+        clientPositionAnchorTime = nowPerf;
+      } else if (Math.abs(delta) > 500) {
+        // Smooth drift correction (drift exceeds 500ms)
         clientPositionAnchorMs = incomingPos;
         clientPositionAnchorTime = nowPerf;
       }
@@ -837,6 +867,8 @@
             render(msg.data);
           } else if (msg.type === 'reload') {
             location.reload();
+          } else if (msg.type === 'switchTab') {
+            switchTab(msg.tab);
           }
         } catch (e) {}
       };
@@ -872,6 +904,8 @@
             render(msg.data);
           } else if (msg.type === 'reload') {
             location.reload();
+          } else if (msg.type === 'switchTab') {
+            switchTab(msg.tab);
           }
         } catch (e) {}
       };
@@ -905,27 +939,16 @@
     }
   }
 
-  // Minimize buttons (Header and Side Pill)
+  // Minimize button (Header)
   const btnWindowMinimize = document.getElementById('btn-window-minimize');
-  const sidePillMinimize = document.getElementById('side-pill-minimize');
   if (btnWindowMinimize) {
     btnWindowMinimize.addEventListener('click', () => triggerWindowAction('minimize'));
   }
-  if (sidePillMinimize) {
-    sidePillMinimize.addEventListener('click', () => triggerWindowAction('minimize'));
-  }
 
-  // Fullscreen buttons
+  // Fullscreen button (Header)
   const btnWindowFullscreen = document.getElementById('btn-window-fullscreen');
-  const sidePillFullscreen = document.getElementById('side-pill-fullscreen');
   if (btnWindowFullscreen) {
     btnWindowFullscreen.addEventListener('click', () => {
-      toggleBrowserFullscreen();
-      triggerWindowAction('fullscreen');
-    });
-  }
-  if (sidePillFullscreen) {
-    sidePillFullscreen.addEventListener('click', () => {
       toggleBrowserFullscreen();
       triggerWindowAction('fullscreen');
     });
@@ -940,6 +963,8 @@
       }
     });
   }
+
+
 
   // Global Keyboard Shortcuts
   window.addEventListener('keydown', (e) => {

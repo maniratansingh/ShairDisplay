@@ -549,6 +549,13 @@ html, body {
 .progress-bar-container {
   width: 100%;
   cursor: pointer;
+  border-radius: 9999px;
+  outline: none;
+}
+
+.progress-bar-container:focus-visible {
+  outline: 2px solid var(--artwork-primary, #fa2d55);
+  outline-offset: 4px;
 }
 
 .progress-track-glass {
@@ -1298,6 +1305,11 @@ html, body {
 
   .diag-bottom-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hw-sparkline-box {
+    padding: 16px 18px;
+    min-height: 80px;
   }
 }
 

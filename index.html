@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShairDisplay — AirPlay 2 Hi-Fi Display</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
-  <link rel="stylesheet" href="./style.css?v=13.0">
+  <link rel="stylesheet" href="./style.css?v=16.0">
 </head>
 <body>
   <!-- Ambient Dynamic Artwork Color Mesh & Blur Backdrop -->
@@ -51,20 +51,20 @@
       <!-- Right: Playback Status Pill & Window Controls -->
       <div class="header-right">
         <div class="window-control-dock" id="window-control-dock" aria-label="Desktop Window Controls">
-          <button id="btn-window-minimize" class="window-action-btn" title="Minimize to Raspberry Pi Desktop (Key: M or Super+D)">
+          <button id="btn-window-minimize" class="window-action-btn" aria-label="Minimize to Raspberry Pi Desktop" title="Minimize to Raspberry Pi Desktop (Key: M or Super+D)">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
             <span class="btn-label">Desktop</span>
             <kbd class="key-badge">M</kbd>
           </button>
-          <button id="btn-window-fullscreen" class="window-action-btn" title="Toggle Fullscreen (Key: F11)">
+          <button id="btn-window-fullscreen" class="window-action-btn" aria-label="Toggle Fullscreen Mode" title="Toggle Fullscreen (Key: F11)">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
             </svg>
             <kbd class="key-badge">F11</kbd>
           </button>
-          <button id="btn-window-close" class="window-action-btn btn-close" title="Stop / Close Display (Key: Q or Alt+F4)">
+          <button id="btn-window-close" class="window-action-btn btn-close" aria-label="Close Display" title="Stop / Close Display (Key: Q or Alt+F4)">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -79,32 +79,6 @@
         </div>
       </div>
     </header>
-
-    <!-- Floating Side Desktop Control Pill (Option on the Side) -->
-    <aside class="side-desktop-panel" id="side-desktop-panel" aria-label="Quick Desktop Switcher">
-      <button class="side-pill-btn" id="side-pill-minimize" title="Minimize to Raspberry Pi Desktop (Shortcut: M or Super+D)">
-        <span class="side-pill-icon">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-        </span>
-        <span class="side-pill-text">Desktop</span>
-        <kbd class="side-pill-kbd">M</kbd>
-      </button>
-      <button class="side-pill-btn" id="side-pill-fullscreen" title="Toggle Fullscreen (Shortcut: F11)">
-        <span class="side-pill-icon">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <polyline points="9 21 3 21 3 15"></polyline>
-            <line x1="21" y1="3" x2="14" y2="10"></line>
-            <line x1="3" y1="21" x2="10" y2="14"></line>
-          </svg>
-        </span>
-        <kbd class="side-pill-kbd">F11</kbd>
-      </button>
-    </aside>
 
     <!-- ======================================================== -->
     <!-- TAB 1: NOW PLAYING (HERO VIEW)                            -->
@@ -156,9 +130,9 @@
             <h3 class="song-album" id="song-album">Connect via Control Center on your Apple device</h3>
           </div>
 
-          <!-- Glossy Audio Seeking / Progress Bar -->
+          <!-- Glossy Audio Seeking / Progress Bar with Moving Progress Ball -->
           <div class="audio-seeking-panel stopped" id="audio-seeking-panel">
-            <div class="progress-bar-container" id="progress-bar-container">
+            <div class="progress-bar-container" id="progress-bar-container" role="progressbar" tabindex="0" aria-label="Playback Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0 minutes 0 seconds">
               <div class="progress-track-glass">
                 <div class="progress-fill-glow" id="progress-fill"></div>
                 <div class="progress-scrub-knob" id="progress-knob"></div>
@@ -732,6 +706,6 @@
 
   </div>
 
-  <script src="./app.js?v=14.0"></script>
+  <script src="./app.js?v=16.0"></script>
 </body>
 </html>
