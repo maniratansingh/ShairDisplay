@@ -487,8 +487,19 @@ async function pollMetadata() {
         const now = Date.now();
         const currentTrackKey = `${title}:::${meta['xesam:artist'] || ''}:::${lengthMs}`;
 
-        // Clamp position: never exceed duration, never go below 0
-        const positionMs = (lengthMs > 0) ? Math.min(lengthMs, Math.max(0, dbusPositionMs)) : Math.max(0, dbusPositionMs);
+        // Monotonic progression guard: never let position snap backward to 0 or stale metadata during active playback
+        let positionMs = dbusPositionMs;
+        if (currentTrackKey === lastTrackKey && mprisStatus === 'Playing' && state.playback.positionMs > 0) {
+          if (positionMs === 0 || (positionMs < state.playback.positionMs && (state.playback.positionMs - positionMs) < 60000)) {
+            const elapsed = Math.max(0, now - (state.playback.positionUpdatedAt || now));
+            positionMs = Math.min(lengthMs, state.playback.positionMs + elapsed);
+          }
+        }
+        if (lengthMs > 0) {
+          positionMs = Math.min(lengthMs, Math.max(0, positionMs));
+        } else {
+          positionMs = Math.max(0, positionMs);
+        }
 
         if ((mprisStatus === 'Playing' || mprisStatus === 'Paused') && title) {
           wakeDisplayIfNeeded(mprisStatus === 'Playing');
@@ -747,6 +758,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Network Keep-Alive Heartbeat (prevents Wi-Fi router IGMP multicast tables from expiring after long idle)
+setInterval(() => {
+  child_process.exec('ping -c 1 -W 1 44.44.44.1 >/dev/null 2>&1', () => {});
+}, 60000);
 
 // Start server
 server.listen(PORT, '0.0.0.0', () => {

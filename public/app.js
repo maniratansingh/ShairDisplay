@@ -305,6 +305,7 @@
 
   let clientPositionAnchorMs = 0;
   let clientPositionAnchorTime = 0;
+  let lastKnownTrackKey = '';
 
   function updateProgress() {
     if (playbackData && playbackData.status === 'Playing' && playbackData.durationMs > 0) {
@@ -571,9 +572,30 @@
 
     updateWakeLock(playbackData.status === 'Playing');
 
-    // Monotonic client-side anchor for smooth, drift-free 60fps interpolation
-    clientPositionAnchorMs = playbackData.positionMs || 0;
-    clientPositionAnchorTime = performance.now();
+    // Monotonic client-side anchor with regression guard
+    // Never snaps backward to 0:00 or stale 60s metadata chunks during active playback
+    const currentTrackKey = `${playbackData.title || ''}:::${playbackData.artist || ''}:::${playbackData.durationMs || 0}`;
+    const incomingPos = playbackData.positionMs || 0;
+    const nowPerf = performance.now();
+
+    if (currentTrackKey !== lastKnownTrackKey || !lastKnownTrackKey) {
+      lastKnownTrackKey = currentTrackKey;
+      clientPositionAnchorMs = incomingPos;
+      clientPositionAnchorTime = nowPerf;
+    } else if (playbackData.status === 'Playing') {
+      const currentInterpolated = clientPositionAnchorMs + Math.max(0, nowPerf - (clientPositionAnchorTime || nowPerf));
+      const delta = incomingPos - currentInterpolated;
+      // Resync anchor only if:
+      // 1. Incoming position is advancing (delta >= -300ms)
+      // 2. OR user deliberately scrubbed backwards in Apple Music (delta < -3000ms)
+      if (delta >= -300 || delta < -3000) {
+        clientPositionAnchorMs = incomingPos;
+        clientPositionAnchorTime = nowPerf;
+      }
+    } else {
+      clientPositionAnchorMs = incomingPos;
+      clientPositionAnchorTime = nowPerf;
+    }
 
     // 1. Header & Badges
     const status = playbackData.status || 'Stopped';
