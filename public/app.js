@@ -814,6 +814,8 @@
           const msg = JSON.parse(evt.data);
           if (msg.type === 'init' || msg.type === 'state') {
             render(msg.data);
+          } else if (msg.type === 'reload') {
+            location.reload();
           }
         } catch (e) {}
       };
@@ -847,6 +849,8 @@
             if (elPipeWsPing) elPipeWsPing.textContent = `${wsLatencyMs} ms`;
           } else if (msg.type === 'init' || msg.type === 'state') {
             render(msg.data);
+          } else if (msg.type === 'reload') {
+            location.reload();
           }
         } catch (e) {}
       };
@@ -935,6 +939,10 @@
     else if (key === 't') {
       const isNowPlaying = viewNowPlaying.classList.contains('active');
       switchTab(isNowPlaying ? 'diagnostics' : 'now-playing');
+    }
+    // 'r' -> Reload UI
+    else if (key === 'r') {
+      location.reload();
     }
     // Window management shortcuts ONLY apply on the physical Raspberry Pi display
     if (isLocalDisplay) {

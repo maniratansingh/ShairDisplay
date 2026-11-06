@@ -751,6 +751,21 @@ app.post('/api/system/window/relaunch', (req, res) => {
   });
 });
 
+// Broadcast reload to all connected frontend clients
+app.post('/api/system/window/reload', (req, res) => {
+  const payload = JSON.stringify({ type: 'reload' });
+  for (const client of wss.clients) {
+    if (client.readyState === 1) { // WebSocket.OPEN
+      try { client.send(payload); } catch (e) {}
+    }
+  }
+  const sseMsg = `data: ${payload}\n\n`;
+  for (let i = sseClients.length - 1; i >= 0; i--) {
+    try { sseClients[i].write(sseMsg); } catch (e) { sseClients.splice(i, 1); }
+  }
+  res.json({ success: true, action: 'reloaded' });
+});
+
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, 'public')));
 
