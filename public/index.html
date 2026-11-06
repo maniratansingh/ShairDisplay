@@ -166,8 +166,28 @@
             <h3 class="song-album" id="song-album">Connect via Control Center on your Apple device</h3>
           </div>
 
-          <!-- Glossy Audio Seeking / Progress Bar -->
-          <div class="audio-seeking-panel stopped" id="audio-seeking-panel">
+          <!-- CodeFronts Liquid Glass Audio Player UI (lg-12) -->
+          <div class="lg-12" id="lg-12-root" aria-label="Liquid glass audio player">
+            <div class="lg-12__player">
+              <div class="lg-12__art" id="lg-12-art" aria-hidden="true"></div>
+              <div class="lg-12__body">
+                <p class="lg-12__track" id="lg-12-track" aria-live="polite">AirPlay 2 — Ready to Stream</p>
+                <input class="lg-12__seek" id="lg-12-seek" type="range" min="0" max="100" value="0" aria-label="Seek">
+                <div class="lg-12__times">
+                  <span id="lg-12-cur">0:00</span>
+                  <span id="lg-12-dur">0:00</span>
+                </div>
+                <div class="lg-12__ctrls">
+                  <button class="lg-12__btn" id="lg-12-prev" type="button" aria-label="Previous track">⏮</button>
+                  <button class="lg-12__btn lg-12__btn--play" id="lg-12-play" type="button" aria-label="Play" aria-pressed="false">▶</button>
+                  <button class="lg-12__btn" id="lg-12-next" type="button" aria-label="Next track">⏭</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legacy Audio Seeking Panel Reference (Preserved for Event Binding) -->
+          <div class="audio-seeking-panel stopped" id="audio-seeking-panel" style="display: none;">
             <div class="progress-bar-container" id="progress-bar-container">
               <div class="progress-track-glass">
                 <div class="progress-fill-glow" id="progress-fill"></div>

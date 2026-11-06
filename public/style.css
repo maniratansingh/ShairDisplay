@@ -164,49 +164,58 @@ html, body {
 
 .brand-pill {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--artwork-primary);
-  border: 1px solid var(--glass-border-liquid);
-  padding: 4px 11px;
-  border-radius: 20px;
-  backdrop-filter: blur(16px);
-  transition: color 0.5s ease;
+  background: color-mix(in oklab, white 16%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 14px 30px -16px rgba(0, 0, 0, .6);
+  color: var(--apple-cyan, #64d2ff);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: transform 0.18s ease;
+}
+
+.brand-pill:hover {
+  transform: translateY(-2px);
 }
 
 /* Apple-style Frosted Segmented Control */
 .nav-segment-control {
   display: flex;
   align-items: center;
-  background: var(--glass-surface);
-  border: 1.5px solid var(--glass-border-liquid);
-  border-radius: var(--radius-pill);
+  gap: 4px;
+  background: color-mix(in oklab, white 10%, transparent);
+  border: 1px solid rgba(255, 255, 255, .35);
+  border-radius: 9999px;
   padding: 5px;
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  box-shadow: var(--glass-shadow), var(--glass-specular);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 14px 30px -16px rgba(0, 0, 0, .6);
 }
 
 .nav-tab-btn {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 10px 24px;
-  border: none;
+  padding: 9px 22px;
+  border: 1px solid transparent;
   background: transparent;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.85);
   font-family: inherit;
   font-size: 14.5px;
   font-weight: 700;
-  border-radius: var(--radius-pill);
+  border-radius: 9999px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.2s, transform 0.15s;
 }
 
 .nav-tab-btn:hover {
-  color: var(--text-pure);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
   transform: translateY(-1px);
 }
 
@@ -216,10 +225,10 @@ html, body {
 }
 
 .nav-tab-btn.active {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.14));
-  color: var(--text-pure);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: color-mix(in oklab, white 20%, transparent);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.50);
 }
 
 /* Header Right Status */
@@ -235,12 +244,17 @@ html, body {
   font-size: 14px;
   font-weight: 700;
   padding: 9px 20px;
-  border-radius: var(--radius-pill);
-  background: var(--glass-surface);
-  border: 1.5px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), var(--glass-specular);
+  border-radius: 9999px;
+  background: color-mix(in oklab, white 16%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 14px 30px -16px rgba(0, 0, 0, .6);
+  transition: transform 0.18s ease;
+}
+
+.status-glass-pill:hover {
+  transform: translateY(-2px);
 }
 
 .status-pulse-dot {
@@ -490,62 +504,61 @@ html, body {
   }
 }
 
+/* ========================================================
+   EXACT LG-05 TRANSLUCENCY SPECIFICATION (ALL PILLS)
+   background: color-mix(in oklab,white 16%,transparent);
+   backdrop-filter: blur(14px) saturate(160%);
+   border: 1px solid rgba(255,255,255,.4);
+   box-shadow: inset 0 1px 0 rgba(255,255,255,.5),0 14px 30px -16px rgba(0,0,0,.6);
+   ======================================================== */
+.song-title,
+.song-artist,
+.song-album,
+.glass-badge,
+.floating-pill,
+.brand-pill,
+.status-glass-pill,
+.standby-pill {
+  position: relative;
+  z-index: 1;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, .4);
+  background: color-mix(in oklab, white 16%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 14px 30px -16px rgba(0, 0, 0, .6);
+  transition: transform .18s, background .2s;
+}
+
+.song-title:hover,
+.song-artist:hover,
+.song-album:hover,
+.glass-badge:hover,
+.floating-pill:hover,
+.brand-pill:hover,
+.status-glass-pill:hover,
+.standby-pill:hover {
+  transform: translateY(-2px);
+}
+
 .glass-badge {
   font-size: 12.5px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   padding: 6px 18px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, white 14%, transparent);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-top: 1.5px solid rgba(255, 255, 255, 0.85);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.50), 0 14px 28px -14px rgba(0, 0, 0, 0.60);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.glass-badge::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 100%);
-  border-radius: inherit;
-  pointer-events: none;
 }
 
 .glass-badge.highlight {
-  background: color-mix(in oklab, #ec4899 35%, white 10%);
-  border-color: rgba(255, 255, 255, 0.40);
-  border-top: 1.8px solid #ffffff;
-  color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 8px 24px var(--artwork-ambient);
-  transition: color 0.5s ease;
+  background: var(--artwork-primary, oklch(0.68 0.18 300));
+  border-color: color-mix(in oklab, var(--artwork-primary, oklch(0.68 0.18 300)) 40%, white);
 }
 
 .song-title {
   display: inline-flex;
   align-items: center;
-  padding: 14px 34px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, white 12%, transparent);
-  backdrop-filter: blur(14px) saturate(220%);
-  -webkit-backdrop-filter: blur(14px) saturate(220%);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-top: 1.8px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 24px 48px -20px rgba(0, 0, 0, 0.70);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
+  padding: 15px 34px;
   font-size: clamp(34px, 3.2vw, 52px);
   font-weight: 900;
   letter-spacing: -1.2px;
@@ -555,177 +568,190 @@ html, body {
   max-width: 100%;
 }
 
-/* Layer 1: True optical refraction & distortion displacement of backdrop */
-.song-title::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  background-image: var(--backdrop-art-url, none);
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  filter: url(#liquid-glass-lens);
-  transform: scale(1.025);
-  opacity: 0.55;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Layer 2: Moving Specular Shimmer Sweep (lg-19 sweep inspiration) */
-.song-title::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.24) 48%, transparent 66%);
-  transform: translateX(-100%);
-  animation: lg-19-sweep 3.8s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
 .song-artist {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 28px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, white 10%, transparent);
-  backdrop-filter: blur(14px) saturate(200%);
-  -webkit-backdrop-filter: blur(14px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-top: 1.6px solid rgba(255, 255, 255, 0.90);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 18px 36px -18px rgba(0, 0, 0, 0.65);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
+  padding: 12px 28px;
   font-size: clamp(20px, 1.8vw, 28px);
   font-weight: 800;
   letter-spacing: -0.4px;
   color: #ffffff;
   line-height: 1.25;
-  transition: color 0.5s ease;
+  transition: transform 0.18s ease, color 0.5s ease;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
   max-width: 100%;
-}
-
-.song-artist::before {
-  content: "";
-  position: absolute;
-  inset: -10px;
-  background-image: var(--backdrop-art-url, none);
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  filter: url(#liquid-glass-lens);
-  transform: scale(1.025);
-  opacity: 0.50;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.song-artist::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.02) 65%, transparent 100%);
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
 }
 
 .song-album {
   display: inline-flex;
   align-items: center;
-  padding: 8px 24px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, white 8%, transparent);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-top: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 14px 28px -14px rgba(0, 0, 0, 0.60);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
+  padding: 10px 24px;
   font-size: clamp(14px, 1.1vw, 18px);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
   line-height: 1.35;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
   max-width: 100%;
 }
 
-.song-album::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.02) 65%, transparent 100%);
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
+/* ========================================================
+   CODEFRONTS LIQUID GLASS AUDIO PLAYER UI (LG-12)
+   ======================================================== */
+.lg-12 {
+  --accent: oklch(0.68 0.18 300);
+  --art: none;
+  font-family: inherit;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 6px;
 }
 
-/* Glossy Audio Seeking / Progress Bar (Liquid Glass Chassis from lg-05 & lg-12) */
-.audio-seeking-panel {
+.lg-12__player {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 24px 30px;
+  gap: 18px;
+  align-items: center;
+  width: 100%;
+  max-width: 580px;
+  padding: 18px 24px;
   border-radius: 26px;
-  background: color-mix(in oklab, white 10%, transparent);
+  border: 1px solid rgba(255, 255, 255, .28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 30px 60px -30px rgba(0, 0, 0, .7);
+  background: color-mix(in oklab, white 8%, transparent);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.30);
-  border-top: 1.8px solid rgba(255, 255, 255, 0.85);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 30px 60px -30px rgba(0, 0, 0, 0.70);
-  position: relative;
+}
+
+.lg-12__player::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background: var(--art) center/cover;
+  filter: blur(40px) saturate(160%) brightness(.7);
+  transform: scale(1.2);
+}
+
+.lg-12__art {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  border-radius: 16px;
+  background: var(--art) center/cover;
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 255, 255, .25);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.lg-12__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.lg-12__track {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
   overflow: hidden;
-  isolation: isolate;
-  transition: opacity 0.4s ease, border-color 0.4s ease;
+  text-overflow: ellipsis;
+  margin-bottom: 10px;
 }
 
-.audio-seeking-panel::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  background-image: var(--backdrop-art-url, none);
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  filter: url(#liquid-glass-lens);
-  transform: scale(1.02);
-  opacity: 0.45;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 0;
+.lg-12__seek {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fff calc(var(--p, 0)*1%), rgba(255, 255, 255, .25) 0);
+  cursor: pointer;
+  outline: none;
 }
 
-/* Specular Shimmer Sweep across player chassis */
-.audio-seeking-panel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.20) 48%, transparent 66%);
-  transform: translateX(-100%);
-  animation: lg-19-sweep 4.2s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
+.lg-12__seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .5), 0 0 0 4px color-mix(in oklab, var(--accent) 60%, transparent);
 }
 
-.audio-seeking-panel.stopped {
-  opacity: 0.72;
+.lg-12__seek::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.lg-12__seek:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+.lg-12__times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .7);
+  margin: 6px 0 12px;
+}
+
+.lg-12__ctrls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.lg-12__btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .3);
+  cursor: pointer;
+  font-size: 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, .14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lg-12__btn--play {
+  width: 52px;
+  height: 52px;
+  font-size: 18px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 85%, white), var(--accent));
+  border-color: color-mix(in oklab, var(--accent) 40%, white);
+}
+
+.lg-12__btn:hover {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, .24);
+}
+
+.lg-12__btn--play:hover {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 75%, white), var(--accent));
+}
+
+.lg-12__btn:active {
+  transform: scale(.94);
+}
+
+.lg-12__btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
 }
 
 .progress-bar-container {

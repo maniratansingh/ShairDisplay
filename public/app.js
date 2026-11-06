@@ -42,6 +42,17 @@
   const elPillVolume = document.getElementById('pill-volume');
   const elPillStreamFormat = document.getElementById('pill-stream-format');
 
+  // CodeFronts Liquid Glass Audio Player UI (lg-12)
+  const elLg12Root = document.getElementById('lg-12-root');
+  const elLg12Art = document.getElementById('lg-12-art');
+  const elLg12Track = document.getElementById('lg-12-track');
+  const elLg12Seek = document.getElementById('lg-12-seek');
+  const elLg12Cur = document.getElementById('lg-12-cur');
+  const elLg12Dur = document.getElementById('lg-12-dur');
+  const elLg12Prev = document.getElementById('lg-12-prev');
+  const elLg12Play = document.getElementById('lg-12-play');
+  const elLg12Next = document.getElementById('lg-12-next');
+
   // Tab 2: Vintage Analogue VU Meters Elements
   const elNeedleLeft = document.getElementById('needle-group-left');
   const elNeedleRight = document.getElementById('needle-group-right');
@@ -188,15 +199,21 @@
       const ambient = `rgba(${bestR}, ${bestG}, ${bestB}, 0.45)`;
       const glow = `rgba(${bestR}, ${bestG}, ${bestB}, 0.65)`;
 
-      // Apply dynamically to document root
+      // Apply dynamically to document root and lg-12 player
       document.documentElement.style.setProperty('--artwork-primary', primary);
       document.documentElement.style.setProperty('--artwork-ambient', ambient);
       document.documentElement.style.setProperty('--artwork-glow', glow);
+      if (elLg12Root) {
+        elLg12Root.style.setProperty('--accent', primary);
+      }
     } catch (e) {
       // Safe fallback
       document.documentElement.style.setProperty('--artwork-primary', '#fa2d55');
       document.documentElement.style.setProperty('--artwork-ambient', 'rgba(250, 45, 85, 0.45)');
       document.documentElement.style.setProperty('--artwork-glow', 'rgba(250, 45, 85, 0.65)');
+      if (elLg12Root) {
+        elLg12Root.style.setProperty('--accent', '#fa2d55');
+      }
     }
   }
 
@@ -207,6 +224,10 @@
     document.documentElement.style.setProperty('--artwork-glow', 'rgba(255, 255, 255, 0.08)');
     if (elAmbientBackdrop) elAmbientBackdrop.style.backgroundImage = 'none';
     document.documentElement.style.setProperty('--backdrop-art-url', 'none');
+    if (elLg12Root) {
+      elLg12Root.style.setProperty('--art', 'none');
+      elLg12Root.style.setProperty('--accent', '#fa2d55');
+    }
   }
 
   // ========================================================
@@ -218,6 +239,7 @@
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.add('active');
       if (elArtworkImgCurrent) elArtworkImgCurrent.classList.remove('active');
       if (elArtworkImgNext) elArtworkImgNext.classList.remove('active');
+      if (elLg12Root) elLg12Root.style.setProperty('--art', 'none');
       resetPalette();
       return;
     }
@@ -240,11 +262,13 @@
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.remove('active');
       if (elAmbientBackdrop) elAmbientBackdrop.style.backgroundImage = `url("${newUrl}")`;
       document.documentElement.style.setProperty('--backdrop-art-url', `url("${newUrl}")`);
+      if (elLg12Root) elLg12Root.style.setProperty('--art', `url("${newUrl}")`);
     };
     tempImg.onerror = () => {
       if (elArtworkStandbyHero) elArtworkStandbyHero.classList.add('active');
       imgCurrent.classList.remove('active');
       imgNext.classList.remove('active');
+      if (elLg12Root) elLg12Root.style.setProperty('--art', 'none');
       resetPalette();
     };
     tempImg.src = newUrl;
@@ -264,6 +288,18 @@
       elAudioSeekingPanel.classList.remove('playing');
       elAudioSeekingPanel.style.setProperty('--p', '0');
     }
+    if (elLg12Root) {
+      elLg12Root.style.setProperty('--p', '0');
+    }
+    if (elLg12Seek) {
+      elLg12Seek.value = '0';
+    }
+    if (elLg12Cur) {
+      elLg12Cur.textContent = '0:00';
+    }
+    if (elLg12Dur) {
+      elLg12Dur.textContent = '0:00';
+    }
     elProgressFill.style.width = '0%';
     elProgressKnob.style.left = '0%';
     elTimeElapsed.textContent = '0:00';
@@ -279,6 +315,17 @@
     elSongTitle.textContent = 'AirPlay 2';
     elSongArtist.textContent = (receiverData && receiverData.active) ? 'Ready to Stream' : 'AirPlay Standby';
     elSongAlbum.textContent = 'Select this speaker in Control Center on your Apple device';
+
+    if (elLg12Track) {
+      elLg12Track.textContent = (receiverData && receiverData.active) ? 'AirPlay 2 — Ready to Stream' : 'AirPlay Standby';
+    }
+    if (elLg12Play) {
+      elLg12Play.textContent = '▶';
+      elLg12Play.setAttribute('aria-pressed', 'false');
+    }
+    if (elLg12Root) {
+      elLg12Root.style.setProperty('--art', 'none');
+    }
 
     if (elGenreRow) elGenreRow.style.display = 'none';
     if (elBadgeGenre) elBadgeGenre.style.display = 'none';
@@ -327,6 +374,18 @@
         elAudioSeekingPanel.classList.add('playing');
         elAudioSeekingPanel.style.setProperty('--p', percent.toFixed(2));
       }
+      if (elLg12Root) {
+        elLg12Root.style.setProperty('--p', percent.toFixed(2));
+      }
+      if (elLg12Seek) {
+        elLg12Seek.value = percent.toFixed(2);
+      }
+      if (elLg12Cur) {
+        elLg12Cur.textContent = formatTime(currentPosition);
+      }
+      if (elLg12Dur) {
+        elLg12Dur.textContent = formatTime(playbackData.durationMs);
+      }
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
@@ -349,6 +408,18 @@
         elAudioSeekingPanel.classList.remove('stopped');
         elAudioSeekingPanel.classList.add('playing');
         elAudioSeekingPanel.style.setProperty('--p', percent.toFixed(2));
+      }
+      if (elLg12Root) {
+        elLg12Root.style.setProperty('--p', percent.toFixed(2));
+      }
+      if (elLg12Seek) {
+        elLg12Seek.value = percent.toFixed(2);
+      }
+      if (elLg12Cur) {
+        elLg12Cur.textContent = formatTime(currentPosition);
+      }
+      if (elLg12Dur) {
+        elLg12Dur.textContent = formatTime(playbackData.durationMs);
       }
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
@@ -374,6 +445,82 @@
       seekToastTimer = setTimeout(() => {
         elSeekHintToast.classList.remove('active');
       }, 2500);
+    });
+  }
+
+  // CodeFronts Liquid Glass Player (lg-12) Interactive Controls
+  if (elLg12Play) {
+    elLg12Play.addEventListener('click', () => {
+      if (isDemoMode) {
+        demoPlaying = !demoPlaying;
+        const iconPlay = document.getElementById('demo-play-icon');
+        if (iconPlay) {
+          iconPlay.innerHTML = demoPlaying 
+            ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+            : '<polygon points="5 3 19 12 5 21 5 3"/>';
+        }
+        renderDemoState();
+        return;
+      }
+      if (elSeekHintToast) {
+        elSeekHintToast.classList.add('active');
+        if (seekToastTimer) clearTimeout(seekToastTimer);
+        seekToastTimer = setTimeout(() => {
+          elSeekHintToast.classList.remove('active');
+        }, 2500);
+      }
+    });
+  }
+
+  if (elLg12Next) {
+    elLg12Next.addEventListener('click', () => {
+      if (isDemoMode) {
+        setDemoTrack((demoTrackIdx + 1) % DEMO_TRACKS.length);
+        return;
+      }
+      if (elSeekHintToast) {
+        elSeekHintToast.classList.add('active');
+        if (seekToastTimer) clearTimeout(seekToastTimer);
+        seekToastTimer = setTimeout(() => {
+          elSeekHintToast.classList.remove('active');
+        }, 2500);
+      }
+    });
+  }
+
+  if (elLg12Prev) {
+    elLg12Prev.addEventListener('click', () => {
+      if (isDemoMode) {
+        setDemoTrack((demoTrackIdx - 1 + DEMO_TRACKS.length) % DEMO_TRACKS.length);
+        return;
+      }
+      if (elSeekHintToast) {
+        elSeekHintToast.classList.add('active');
+        if (seekToastTimer) clearTimeout(seekToastTimer);
+        seekToastTimer = setTimeout(() => {
+          elSeekHintToast.classList.remove('active');
+        }, 2500);
+      }
+    });
+  }
+
+  if (elLg12Seek) {
+    elLg12Seek.addEventListener('input', () => {
+      const val = parseFloat(elLg12Seek.value) || 0;
+      if (elLg12Root) {
+        elLg12Root.style.setProperty('--p', val);
+      }
+      if (isDemoMode) {
+        seekDemoPlayback(val / 100);
+      } else {
+        if (elSeekHintToast) {
+          elSeekHintToast.classList.add('active');
+          if (seekToastTimer) clearTimeout(seekToastTimer);
+          seekToastTimer = setTimeout(() => {
+            elSeekHintToast.classList.remove('active');
+          }, 2500);
+        }
+      }
     });
   }
 
@@ -673,6 +820,18 @@
 
       if (elGenreRow) elGenreRow.style.display = hasBadge ? 'flex' : 'none';
 
+      // Update CodeFronts lg-12 Liquid Glass Player
+      if (elLg12Track) {
+        elLg12Track.textContent = playbackData.artist
+          ? `${playbackData.title} — ${playbackData.artist}`
+          : playbackData.title;
+      }
+      if (elLg12Play) {
+        const isPlaying = status === 'Playing';
+        elLg12Play.textContent = isPlaying ? '❚❚' : '▶';
+        elLg12Play.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+      }
+
       updateArtwork(playbackData.artworkUrl);
 
       // Apply server-extracted vibrant palette from the real artwork JPEG
@@ -680,6 +839,9 @@
         document.documentElement.style.setProperty('--artwork-primary', playbackData.colors.primary);
         document.documentElement.style.setProperty('--artwork-ambient', playbackData.colors.ambient);
         document.documentElement.style.setProperty('--artwork-glow', playbackData.colors.glow);
+        if (elLg12Root) {
+          elLg12Root.style.setProperty('--accent', playbackData.colors.primary);
+        }
       }
     } else {
       renderStandbyUI();
