@@ -357,7 +357,13 @@
   // Click feedback on seeking panel
   let seekToastTimer = null;
   if (elProgressBarContainer && elSeekHintToast) {
-    elProgressBarContainer.addEventListener('click', () => {
+    elProgressBarContainer.addEventListener('click', (e) => {
+      if (isDemoMode) {
+        const rect = elProgressBarContainer.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        seekDemoPlayback(pct);
+        return;
+      }
       elSeekHintToast.classList.add('active');
       if (seekToastTimer) clearTimeout(seekToastTimer);
       seekToastTimer = setTimeout(() => {
@@ -399,29 +405,40 @@
   };
 
   function updateVUMetersPhysics() {
-    const isPlaying = playbackData && playbackData.status === 'Playing';
+    if (isDemoMode) {
+      const t = performance.now() * 0.003;
+      const dynamicDb = demoPlaying ? (-12 + Math.sin(t) * 5 + Math.cos(t * 2.3) * 3 + (Math.random() - 0.5) * 2) : -20;
+      needleState.leftTarget = dbToNeedleDegrees(dynamicDb);
+      const dynamicBuffer = demoPlaying ? (88 + Math.sin(t * 0.7) * 4) : 0;
+      needleState.rightTarget = percentToBufferDegrees(dynamicBuffer);
+      if (elMeterDbVal) elMeterDbVal.textContent = demoPlaying ? `${dynamicDb.toFixed(1)} dB` : '-20.0 dB';
+      if (elMeterBufferPercent) elMeterBufferPercent.textContent = demoPlaying ? `${dynamicBuffer.toFixed(0)}%` : '0%';
+      if (elMeterBufferLatency) elMeterBufferLatency.textContent = demoPlaying ? `18.4 ms` : '0.0 ms';
+    } else {
+      const isPlaying = playbackData && playbackData.status === 'Playing';
 
-    // Left Meter: True AirPlay Volume Attenuation (dB)
-    if (isPlaying) {
-      let realDb = -20;
-      if (playbackData.airplayVolumeDb !== null && playbackData.airplayVolumeDb !== undefined) {
-        realDb = playbackData.airplayVolumeDb;
-      } else if (playbackData.volume !== null && playbackData.volume !== undefined) {
-        realDb = playbackData.volume > 0 ? (20 * Math.log10(playbackData.volume)) : -20;
+      // Left Meter: True AirPlay Volume Attenuation (dB)
+      if (isPlaying) {
+        let realDb = -20;
+        if (playbackData.airplayVolumeDb !== null && playbackData.airplayVolumeDb !== undefined) {
+          realDb = playbackData.airplayVolumeDb;
+        } else if (playbackData.volume !== null && playbackData.volume !== undefined) {
+          realDb = playbackData.volume > 0 ? (20 * Math.log10(playbackData.volume)) : -20;
+        }
+        needleState.leftTarget = dbToNeedleDegrees(realDb);
+      } else {
+        needleState.leftTarget = -41.8;
       }
-      needleState.leftTarget = dbToNeedleDegrees(realDb);
-    } else {
-      needleState.leftTarget = -41.8;
-    }
 
-    // Right Meter: Real ALSA DAC Ring-Buffer Depth (%) from /proc/asound
-    if (isPlaying && receiverData && receiverData.alsaRunning) {
-      const bufferPct = (receiverData.alsaBufferPercent !== undefined && receiverData.alsaBufferPercent !== null) 
-        ? receiverData.alsaBufferPercent 
-        : 0;
-      needleState.rightTarget = percentToBufferDegrees(bufferPct);
-    } else {
-      needleState.rightTarget = -41.8;
+      // Right Meter: Real ALSA DAC Ring-Buffer Depth (%) from /proc/asound
+      if (isPlaying && receiverData && receiverData.alsaRunning) {
+        const bufferPct = (receiverData.alsaBufferPercent !== undefined && receiverData.alsaBufferPercent !== null) 
+          ? receiverData.alsaBufferPercent 
+          : 0;
+        needleState.rightTarget = percentToBufferDegrees(bufferPct);
+      } else {
+        needleState.rightTarget = -41.8;
+      }
     }
 
     const spring = 0.14;
@@ -975,10 +992,239 @@
     }
   });
 
+  // ========================================================
+  // SAMPLE DEMO ENGINE (FOR GITHUB PAGES & PREVIEWS)
+  // ZERO BACKEND REQUIRED • RICH MONOTONIC SIMULATION
+  // ========================================================
+  const DEMO_TRACKS = [
+    {
+      title: "So Swaezy",
+      artist: "Yo Yo Honey Singh & Hommie Dilliwala",
+      album: "So Swaezy - Single",
+      genre: "Worldwide • Hip-Hop",
+      trackNumber: 1,
+      durationMs: 204754,
+      positionMs: 38400,
+      artworkUrl: "assets/demo-cover-1.jpg",
+      colors: {
+        primary: "rgb(189, 112, 43)",
+        ambient: "rgba(189, 112, 43, 0.45)",
+        glow: "rgba(189, 112, 43, 0.65)"
+      },
+      volume: 0.82,
+      airplayVolumeDb: -9.0,
+      sourceFormat: "ALAC • 48 kHz / 24-bit",
+      outputFormat: "48000/S16_LE/2",
+      alsaDevice: "Raspberry Pi DAC Pro"
+    },
+    {
+      title: "Neon Velocity",
+      artist: "The Midnight & Kavinsky",
+      album: "Endless Summer Nights",
+      genre: "Synthwave",
+      trackNumber: 4,
+      durationMs: 278000,
+      positionMs: 72000,
+      artworkUrl: "assets/demo-cover-2.svg",
+      colors: {
+        primary: "rgb(255, 0, 127)",
+        ambient: "rgba(255, 0, 127, 0.45)",
+        glow: "rgba(0, 242, 254, 0.65)"
+      },
+      volume: 0.88,
+      airplayVolumeDb: -6.0,
+      sourceFormat: "Apple Lossless • 96 kHz / 24-bit",
+      outputFormat: "96000/S24_LE/2",
+      alsaDevice: "HiFiBerry DAC2 HD"
+    },
+    {
+      title: "Solar Echoes",
+      artist: "Nigel Stanford & Ludovico Einaudi",
+      album: "Solar Echoes (Audiophile Remaster)",
+      genre: "Ambient Classical",
+      trackNumber: 2,
+      durationMs: 342000,
+      positionMs: 114000,
+      artworkUrl: "assets/demo-cover-3.svg",
+      colors: {
+        primary: "rgb(255, 179, 71)",
+        ambient: "rgba(255, 179, 71, 0.45)",
+        glow: "rgba(255, 123, 37, 0.65)"
+      },
+      volume: 0.74,
+      airplayVolumeDb: -14.0,
+      sourceFormat: "FLAC • 44.1 kHz / 16-bit",
+      outputFormat: "44100/S16_LE/2",
+      alsaDevice: "Allo Boss DAC"
+    }
+  ];
+
+  let isDemoMode = false;
+  let demoPlaying = true;
+  let demoTrackIdx = 0;
+  let demoLastTick = performance.now();
+  let demoPosMs = 38400;
+  let isBackdropDiscernible = true;
+
+  function seekDemoPlayback(pct) {
+    if (!isDemoMode) return;
+    const track = DEMO_TRACKS[demoTrackIdx];
+    demoPosMs = pct * track.durationMs;
+    if (playbackData) {
+      playbackData.positionMs = demoPosMs;
+      playbackData.positionUpdatedAt = Date.now();
+    }
+  }
+
+  function setDemoTrack(idx) {
+    demoTrackIdx = idx % DEMO_TRACKS.length;
+    const track = DEMO_TRACKS[demoTrackIdx];
+    demoPosMs = track.positionMs || 30000;
+    
+    document.querySelectorAll('.demo-track-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === demoTrackIdx);
+    });
+
+    renderDemoState();
+  }
+
+  function renderDemoState() {
+    const track = DEMO_TRACKS[demoTrackIdx];
+    const demoPayload = {
+      playback: {
+        status: demoPlaying ? 'Playing' : 'Paused',
+        title: track.title,
+        artist: track.artist,
+        album: track.album,
+        genre: track.genre,
+        trackNumber: track.trackNumber,
+        durationMs: track.durationMs,
+        positionMs: demoPosMs,
+        positionUpdatedAt: Date.now(),
+        volume: track.volume,
+        airplayVolumeDb: track.airplayVolumeDb,
+        artworkUrl: track.artworkUrl,
+        artworkFile: track.artworkUrl,
+        hasArtwork: true,
+        colors: track.colors
+      },
+      receiver: {
+        active: true,
+        protocol: 'AirPlay 2',
+        serviceName: 'AirPlay 2 Kiosk Demo',
+        clientName: "Apple iPhone 15 Pro",
+        streamType: 'Buffered',
+        sourceFormat: track.sourceFormat,
+        outputFormat: track.outputFormat,
+        alsaDevice: track.alsaDevice,
+        nqptpActive: true,
+        nqptpMasterClockId: '0x8a05d749f5c50008',
+        nqptpJitterUs: -18.4,
+        alsaRunning: demoPlaying,
+        alsaBufferPercent: 89,
+        alsaBufferMs: 18.4,
+        alsaXrun: false
+      },
+      system: {
+        hostname: 'github-pages-preview',
+        temperatureC: 42.5,
+        cpuLoad: 0.85,
+        cpuCount: 4,
+        memPercent: 18,
+        memUsedMb: 1420,
+        uptimeSec: 3600,
+        kernel: 'AirPlay 2 Web Audio Engine'
+      }
+    };
+
+    render(demoPayload);
+  }
+
+  function activateDemoMode(initialTrackIdx = 0) {
+    if (isDemoMode) return;
+    isDemoMode = true;
+    demoTrackIdx = initialTrackIdx;
+    
+    const elDemoDock = document.getElementById('demo-controller-dock');
+    if (elDemoDock) elDemoDock.style.display = 'inline-flex';
+
+    document.querySelectorAll('.demo-track-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.currentTarget.getAttribute('data-track-index') || '0', 10);
+        setDemoTrack(idx);
+      });
+    });
+
+    const btnBackdropToggle = document.getElementById('btn-toggle-backdrop-mode');
+    const lblBackdrop = document.getElementById('demo-backdrop-mode-label');
+    if (btnBackdropToggle) {
+      btnBackdropToggle.addEventListener('click', () => {
+        isBackdropDiscernible = !isBackdropDiscernible;
+        if (isBackdropDiscernible) {
+          document.documentElement.style.setProperty('--backdrop-blur', '16px');
+          document.documentElement.style.setProperty('--backdrop-brightness', '0.50');
+          if (lblBackdrop) lblBackdrop.textContent = 'Backdrop: Visible';
+        } else {
+          document.documentElement.style.setProperty('--backdrop-blur', '100px');
+          document.documentElement.style.setProperty('--backdrop-brightness', '0.40');
+          if (lblBackdrop) lblBackdrop.textContent = 'Backdrop: Ambient';
+        }
+      });
+    }
+
+    const btnDemoPlay = document.getElementById('btn-demo-play-pause');
+    const iconPlay = document.getElementById('demo-play-icon');
+    if (btnDemoPlay) {
+      btnDemoPlay.addEventListener('click', () => {
+        demoPlaying = !demoPlaying;
+        if (iconPlay) {
+          iconPlay.innerHTML = demoPlaying 
+            ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+            : '<polygon points="5 3 19 12 5 21 5 3"/>';
+        }
+        renderDemoState();
+      });
+    }
+
+    setDemoTrack(initialTrackIdx);
+
+    function demoTick(now) {
+      if (isDemoMode) {
+        const dt = now - demoLastTick;
+        demoLastTick = now;
+        if (demoPlaying) {
+          const track = DEMO_TRACKS[demoTrackIdx];
+          demoPosMs += dt;
+          if (demoPosMs >= track.durationMs) {
+            demoPosMs = 0;
+          }
+          if (playbackData) {
+            playbackData.positionMs = demoPosMs;
+            playbackData.positionUpdatedAt = Date.now();
+          }
+          if (Math.random() < 0.1) {
+            ptpJitterHistory.push(Math.sin(now * 0.004) * 85 + Math.cos(now * 0.009) * 45 + (Math.random() - 0.5) * 20);
+            if (ptpJitterHistory.length > MAX_OSC_POINTS) ptpJitterHistory.shift();
+          }
+        }
+        requestAnimationFrame(demoTick);
+      }
+    }
+    demoLastTick = performance.now();
+    requestAnimationFrame(demoTick);
+  }
+
   // Bootstrap
-  fetchInitial();
-  initSSE();
-  initWS();
-  setInterval(fetchInitial, 2000);
+  const isDemoUrl = location.hostname.includes('github.io') || location.search.includes('demo=true');
+  if (isDemoUrl) {
+    activateDemoMode(0);
+  } else {
+    fetchInitial().catch(() => {
+      if (!isLocalDisplay) activateDemoMode(0);
+    });
+    initSSE();
+    initWS();
+    setInterval(fetchInitial, 2000);
+  }
 
 })();

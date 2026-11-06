@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ShairDisplay — AirPlay 2 Hi-Fi Display</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
-  <link rel="stylesheet" href="/style.css?v=12.0">
+  <link rel="stylesheet" href="./style.css?v=13.0">
 </head>
 <body>
   <!-- Ambient Dynamic Artwork Color Mesh & Blur Backdrop -->
@@ -709,8 +709,29 @@
 
     </main>
 
+    <!-- Floating Interactive Demo Controller (Active on GitHub Pages or ?demo=true) -->
+    <div class="demo-controller-dock" id="demo-controller-dock" aria-label="Demo Controller" style="display: none;">
+      <div class="demo-dock-badge">
+        <span class="demo-pulse-dot"></span>
+        <span>DEMO PREVIEW</span>
+      </div>
+      <div class="demo-track-selector">
+        <button class="demo-track-btn active" data-track-index="0" title="Play Sample Song 1: So Swaezy">Track 1</button>
+        <button class="demo-track-btn" data-track-index="1" title="Play Sample Song 2: Neon Velocity">Track 2</button>
+        <button class="demo-track-btn" data-track-index="2" title="Play Sample Song 3: Solar Echoes">Track 3</button>
+      </div>
+      <div class="demo-divider"></div>
+      <button class="demo-mode-btn" id="btn-toggle-backdrop-mode" title="Toggle Backdrop Style: Discernible Artwork vs Ambient Mesh">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+        <span id="demo-backdrop-mode-label">Backdrop: Visible</span>
+      </button>
+      <button class="demo-play-btn" id="btn-demo-play-pause" title="Play / Pause Demo Playback">
+        <svg id="demo-play-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+    </div>
+
   </div>
 
-  <script src="/app.js?v=12.0"></script>
+  <script src="./app.js?v=13.0"></script>
 </body>
 </html>

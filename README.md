@@ -1,6 +1,11 @@
 # 🎵 ShairDisplay: AirPlay 2 Hi-Fi Music Display & Precision Diagnostics
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://maniratansingh.github.io/ShairDisplay/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
 A room-scale, production-ready Now Playing display and vintage Hi-Fi diagnostic monitor for **Shairport Sync (AirPlay 2)** on Raspberry Pi / Linux.
+
+👉 **[Launch Interactive Live Demo on GitHub Pages](https://maniratansingh.github.io/ShairDisplay/)** — Try the live demo directly in your browser with interactive sample tracks, monotonic progress seeking, ballistic VU meters, and dynamic backdrop styles.
 
 Designed for dedicated 22-inch 1080p desktop monitors, wall-mounted displays, and TV screens connected to your Raspberry Pi streamer.
 
