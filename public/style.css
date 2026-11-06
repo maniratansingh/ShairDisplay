@@ -11,28 +11,22 @@
 
   /* ========================================================
      BACKDROP & GLASS TEMPLATE SYSTEM (UI/UX PRO MAX & IMPECCABLE)
-     Template Preset: Accentuated Artwork Backdrop + Liquid Glass Pills (Sample 1)
+     Template Preset: Discernible Artwork Backdrop + Frosted Glass
      ======================================================== */
-  --backdrop-art-url: none;
-  --backdrop-blur: 1px;               /* Optical clarity: artwork is crisp, recognizable & vibrant */
-  --backdrop-scale: 1.02;             /* Subtle cinematic bleed & crop */
-  --backdrop-brightness: 1.16;        /* High radiant brightness: artwork pops, zero murky darkness */
-  --backdrop-saturate: 185%;          /* Rich, vibrant Apple Music / Cinema color rendering */
-  --backdrop-opacity: 1.0;            /* Full radiant artwork backdrop */
+  --backdrop-blur: 16px;              /* Soft cinematic blur: preserves artwork recognition */
+  --backdrop-scale: 1.05;             /* Subtle cinematic bleed & crop */
+  --backdrop-brightness: 0.50;        /* Optical contrast floor */
+  --backdrop-saturate: 135%;          /* Rich, natural color rendering */
+  --backdrop-opacity: 0.92;           /* Visible artwork backdrop */
 
-  /* Perceptual Liquid Glass Tokens (CodeFronts lg-16 Standard: 10% OKLab + 18px blur + 170% saturate) */
-  --glass-surface: color-mix(in oklab, white 10%, transparent);
-  --glass-surface-subtle: color-mix(in oklab, white 6%, transparent);
-  --glass-surface-hover: color-mix(in oklab, white 14%, transparent);
-  --glass-border: rgba(255, 255, 255, 0.28);
-  --glass-border-liquid: rgba(255, 255, 255, 0.28);
-  --glass-border-hover: rgba(255, 255, 255, 0.50);
-  --glass-blur: 18px;
-  --glass-saturate: 170%;
-  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.40);
-  --glass-shadow: 0 16px 34px -22px rgba(0, 0, 0, 0.60);
-  --glass-shadow-deep: 0 30px 60px -30px rgba(0, 0, 0, 0.70);
-  --radius-pill: 9999px;
+  /* Frosted Liquid Glass Tokens (Apple-grade depth & refraction) */
+  --glass-surface: rgba(18, 20, 28, 0.50);
+  --glass-surface-hover: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-border-liquid: rgba(255, 255, 255, 0.32);
+  --glass-blur: 28px;
+  --glass-specular: inset 0 1px 1px rgba(255, 255, 255, 0.28);
+  --glass-shadow: 0 14px 38px rgba(0, 0, 0, 0.45);
 
   --text-pure: #ffffff;
   --text-muted: rgba(255, 255, 255, 0.88);
@@ -71,11 +65,11 @@ html, body {
 .ambient-color-mesh {
   position: fixed;
   inset: -100px;
-  background: radial-gradient(circle at 25% 35%, var(--artwork-ambient) 0%, rgba(5, 5, 8, 0.15) 60%),
-              radial-gradient(circle at 75% 65%, var(--artwork-glow) 0%, rgba(5, 5, 8, 0.25) 70%),
+  background: radial-gradient(circle at 25% 35%, var(--artwork-ambient) 0%, rgba(5, 5, 8, 0.85) 60%),
+              radial-gradient(circle at 75% 65%, var(--artwork-glow) 0%, rgba(5, 5, 8, 0.95) 70%),
               #050507;
   filter: blur(100px);
-  opacity: 0.18;
+  opacity: 0.85;
   transition: background 1.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
   pointer-events: none;
   z-index: 0;
@@ -83,10 +77,10 @@ html, body {
 
 .ambient-backdrop {
   position: fixed;
-  top: -30px;
-  left: -30px;
-  right: -30px;
-  bottom: -30px;
+  top: -50px;
+  left: -50px;
+  right: -50px;
+  bottom: -50px;
   background-size: cover;
   background-position: center center;
   filter: blur(var(--backdrop-blur)) saturate(var(--backdrop-saturate)) brightness(var(--backdrop-brightness));
@@ -101,11 +95,10 @@ html, body {
   position: fixed;
   inset: 0;
   background: 
-    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.0) 45%, rgba(0, 0, 0, 0.22) 80%, rgba(2, 3, 6, 0.50) 100%),
-    linear-gradient(180deg, rgba(2, 3, 6, 0.28) 0%, rgba(2, 3, 6, 0.0) 25%, rgba(2, 3, 6, 0.0) 75%, rgba(2, 3, 6, 0.40) 100%);
+    radial-gradient(circle at 65% 45%, rgba(6, 8, 12, 0.25) 0%, rgba(5, 5, 8, 0.7) 72%, rgba(3, 4, 6, 0.92) 100%),
+    linear-gradient(180deg, rgba(4, 5, 8, 0.5) 0%, rgba(5, 5, 8, 0.15) 35%, rgba(3, 4, 6, 0.85) 100%);
   pointer-events: none;
   z-index: 2;
-  transition: background 0.8s ease;
 }
 
 /* ================= Shell Container (22-Inch Monitor Scaled) ================= */
@@ -142,21 +135,14 @@ html, body {
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  background: color-mix(in oklab, white 10%, transparent);
-  border: 1px solid rgba(255, 255, 255, .28);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--glass-border-liquid);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-pure);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  transition: border-color 0.3s ease, transform 0.18s ease;
-}
-
-.airplay-icon-glass:hover {
-  border-color: rgba(255, 255, 255, .5);
-  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1.5px 2px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(24px);
 }
 
 .brand-text {
@@ -173,64 +159,49 @@ html, body {
 
 .brand-pill {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  background: color-mix(in oklab, black 25%, color-mix(in oklab, white 12%, transparent));
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, .28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
-  color: var(--apple-cyan, #64d2ff);
-  padding: 6px 14px;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: transform 0.18s ease, border-color 0.3s ease;
-}
-
-.brand-pill:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--artwork-primary);
+  border: 1px solid var(--glass-border-liquid);
+  padding: 4px 11px;
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  transition: color 0.5s ease;
 }
 
 /* Apple-style Frosted Segmented Control */
 .nav-segment-control {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: color-mix(in oklab, black 25%, color-mix(in oklab, white 12%, transparent));
-  border: 1px solid rgba(255, 255, 255, .28);
-  border-radius: 9999px;
+  background: var(--glass-surface);
+  border: 1.5px solid var(--glass-border-liquid);
+  border-radius: var(--radius-pill);
   padding: 5px;
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
-  transition: border-color 0.3s ease;
-}
-
-.nav-segment-control:hover {
-  border-color: rgba(255, 255, 255, .5);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-specular);
 }
 
 .nav-tab-btn {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 9px 22px;
-  border: 1px solid transparent;
+  padding: 10px 24px;
+  border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-muted);
   font-family: inherit;
   font-size: 14.5px;
   font-weight: 700;
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s, border-color 0.3s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-tab-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-pure);
   transform: translateY(-1px);
 }
 
@@ -240,10 +211,10 @@ html, body {
 }
 
 .nav-tab-btn.active {
-  background: color-mix(in oklab, white 14%, transparent);
-  color: #fff;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.14));
+  color: var(--text-pure);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40);
 }
 
 /* Header Right Status */
@@ -259,18 +230,12 @@ html, body {
   font-size: 14px;
   font-weight: 700;
   padding: 9px 20px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, black 25%, color-mix(in oklab, white 12%, transparent));
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, .28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
-  transition: transform 0.18s ease, border-color 0.3s ease;
-}
-
-.status-glass-pill:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, .5);
+  border-radius: var(--radius-pill);
+  background: var(--glass-surface);
+  border: 1.5px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), var(--glass-specular);
 }
 
 .status-pulse-dot {
@@ -500,70 +465,35 @@ html, body {
 .song-meta-header {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+  gap: 12px;
 }
 
 .genre-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 4px;
-}
-
-@keyframes lg-19-sweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  60%, 100% {
-    transform: translateX(100%);
-  }
-}
-
-/* ========================================================
-   EXACT LG-16 TRANSLUCENCY SPECIFICATION (ALL PILLS & BADGES)
-   ======================================================== */
-.glass-badge,
-.floating-pill,
-.brand-pill,
-.status-glass-pill,
-.standby-pill,
-.meter-stat-pill {
-  position: relative;
-  z-index: 1;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, .28);
-  background: color-mix(in oklab, black 25%, color-mix(in oklab, white 12%, transparent));
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 12px 28px -14px rgba(0, 0, 0, .7);
-  transition: transform .18s, border-color .3s, background .2s;
-}
-
-.glass-badge:hover,
-.floating-pill:hover,
-.brand-pill:hover,
-.status-glass-pill:hover,
-.standby-pill:hover,
-.meter-stat-pill:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, .5);
+  margin-bottom: 8px;
 }
 
 .glass-badge {
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  padding: 6px 18px;
-  color: #ffffff;
+  padding: 5px 15px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  color: var(--text-sub);
+  backdrop-filter: blur(20px);
 }
 
 .glass-badge.highlight {
-  background: color-mix(in oklab, var(--artwork-primary, #fa2d55) 75%, black);
-  border-color: color-mix(in oklab, var(--artwork-primary, #fa2d55) 50%, white);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 8px 24px var(--artwork-glow);
-  transition: background 0.5s ease, border-color 0.5s ease;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--artwork-primary);
+  border-color: var(--glass-border-liquid);
+  box-shadow: 0 4px 14px var(--artwork-ambient);
+  transition: color 0.5s ease;
 }
 
 .song-title {
@@ -571,57 +501,45 @@ html, body {
   font-weight: 800;
   letter-spacing: -1.4px;
   line-height: 1.1;
-  color: #ffffff;
+  color: var(--text-pure);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.98), 0 0 40px rgba(0, 0, 0, 0.9);
-  max-width: 100%;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.95);
 }
 
 .song-artist {
   font-size: clamp(22px, 1.8vw, 32px);
   font-weight: 700;
   letter-spacing: -0.5px;
-  color: var(--artwork-primary, #fa2d55);
+  color: var(--artwork-primary);
   line-height: 1.25;
   transition: color 0.5s ease;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95), 0 1px 4px rgba(0, 0, 0, 0.9);
-  max-width: 100%;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
 }
 
 .song-album {
-  font-size: clamp(16px, 1.2vw, 20px);
+  font-size: clamp(17px, 1.2vw, 22px);
   font-weight: 500;
-  color: var(--text-sub, rgba(255, 255, 255, 0.75));
+  color: var(--text-muted);
   line-height: 1.35;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
-  max-width: 100%;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
-/* ========================================================
-   GLOSSY AUDIO SEEKING / PROGRESS BAR (WITH MOVING PROGRESS BALL)
-   ======================================================== */
+/* Glossy Audio Seeking / Progress Bar (Thicker & More Liquid) */
 .audio-seeking-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 26px;
-  border-radius: 22px;
-  background: color-mix(in oklab, black 25%, color-mix(in oklab, white 10%, transparent));
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, .28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  transition: opacity 0.4s ease, border-color 0.3s ease;
-}
-
-.audio-seeking-panel:hover {
-  border-color: rgba(255, 255, 255, .5);
+  gap: 14px;
+  padding: 26px 30px;
+  border-radius: var(--radius-card);
+  background: var(--glass-surface);
+  border: 1.5px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-specular);
+  transition: opacity 0.4s ease, border-color 0.4s ease;
 }
 
 .audio-seeking-panel.stopped {
@@ -631,26 +549,22 @@ html, body {
 .progress-bar-container {
   width: 100%;
   cursor: pointer;
-  position: relative;
-  z-index: 2;
-  padding: 6px 0;
 }
 
 .progress-track-glass {
   position: relative;
   width: 100%;
   height: 10px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
   overflow: visible;
-  box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.50);
+  box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.6);
   transition: height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease;
 }
 
 .progress-bar-container:hover .progress-track-glass {
   height: 12px;
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .progress-fill-glow {
@@ -659,9 +573,9 @@ html, body {
   left: 0;
   height: 100%;
   width: 0%;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, var(--artwork-primary, #fa2d55), #ff416c);
-  box-shadow: 0 0 18px var(--artwork-glow);
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--artwork-primary), #ff416c);
+  box-shadow: 0 0 20px var(--artwork-glow);
   transition: background 0.5s ease;
 }
 
@@ -670,19 +584,18 @@ html, body {
   top: 50%;
   left: 0%;
   transform: translate(-50%, -50%) scale(1);
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #ffffff;
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.65), 0 0 16px var(--artwork-glow), 0 0 24px var(--artwork-primary);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 0 14px var(--artwork-glow);
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
   pointer-events: none;
 }
 
 .progress-bar-container:hover .progress-scrub-knob {
   transform: translate(-50%, -50%) scale(1.35);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75), 0 0 24px var(--artwork-primary), 0 0 36px var(--artwork-glow);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7), 0 0 24px var(--artwork-primary), 0 0 36px var(--artwork-glow);
 }
 
 /* While playing: ONLY cancel transition on left/width so requestAnimationFrame drives exact position with 0 latency, while allowing hover transform/shadow to spring smoothly */
@@ -717,26 +630,22 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  margin-top: 6px;
   font-size: 12px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.75);
   background: rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 20px;
-  padding: 0 14px;
+  padding: 5px 14px;
   opacity: 0;
-  max-height: 0;
-  overflow: hidden;
   pointer-events: none;
   transform: translateY(-4px);
-  transition: opacity 0.28s ease, max-height 0.28s ease, padding 0.28s ease, transform 0.28s ease;
+  transition: opacity 0.28s ease, transform 0.28s ease;
 }
 
 .seek-hint-toast.active {
   opacity: 1;
-  max-height: 40px;
-  padding: 5px 14px;
-  margin-top: 4px;
   transform: translateY(0);
 }
 
@@ -750,170 +659,9 @@ html, body {
 .floating-pill {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 15px;
-  font-weight: 800;
-  padding: 12px 24px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, white 10%, transparent);
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, .28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
-  color: #ffffff;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  transition: transform 0.18s ease, border-color 0.3s ease, background 0.18s ease;
-  cursor: default;
-}
-
-.floating-pill:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, .5);
-  background: color-mix(in oklab, white 14%, transparent);
-}
-
-.floating-pill:active {
-  transform: scale(0.96);
-}
-
-.floating-pill::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.02) 65%, transparent 100%);
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.floating-pill svg {
-  color: var(--artwork-primary);
-  filter: drop-shadow(0 0 10px var(--artwork-ambient));
-  transition: color 0.5s ease;
-}
-
-/* ========================================================
-   RESERVED CLASSIC PRESET (THE OLD SAMPLE PRESERVED & SWITCHABLE)
-   To activate: set body data-template="classic" or press 'G'
-   ======================================================== */
-body[data-template="classic"] {
-  --backdrop-blur: 16px;
-  --backdrop-scale: 1.05;
-  --backdrop-brightness: 0.50;
-  --backdrop-saturate: 135%;
-  --backdrop-opacity: 0.92;
-  --glass-surface: rgba(18, 20, 28, 0.50);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --glass-border-liquid: rgba(255, 255, 255, 0.32);
-  --glass-blur: 28px;
-  --glass-specular: inset 0 1px 1px rgba(255, 255, 255, 0.28);
-  --glass-shadow: 0 14px 38px rgba(0, 0, 0, 0.45);
-}
-
-body[data-template="classic"] .ambient-liquid-overlay {
-  background: 
-    radial-gradient(circle at 65% 45%, rgba(6, 8, 12, 0.25) 0%, rgba(5, 5, 8, 0.7) 72%, rgba(3, 4, 6, 0.92) 100%),
-    linear-gradient(180deg, rgba(4, 5, 8, 0.5) 0%, rgba(5, 5, 8, 0.15) 35%, rgba(3, 4, 6, 0.85) 100%);
-}
-
-body[data-template="classic"] .song-meta-header {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
-}
-
-body[data-template="classic"] .genre-row {
-  margin-bottom: 8px;
-}
-
-body[data-template="classic"] .glass-badge {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  padding: 5px 15px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--glass-border);
-  color: var(--text-sub);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: none;
-}
-
-body[data-template="classic"] .glass-badge.highlight {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--artwork-primary);
-  border-color: var(--glass-border-liquid);
-  box-shadow: 0 4px 14px var(--artwork-ambient);
-}
-
-body[data-template="classic"] .song-title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  font-size: clamp(38px, 3.4vw, 58px);
-  font-weight: 800;
-  letter-spacing: -1.4px;
-  line-height: 1.1;
-  color: var(--text-pure);
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.95);
-}
-
-body[data-template="classic"] .song-artist {
-  display: block;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  font-size: clamp(22px, 1.8vw, 32px);
+  gap: 10px;
+  font-size: 14.5px;
   font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--artwork-primary);
-  line-height: 1.25;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
-}
-
-body[data-template="classic"] .song-album {
-  display: block;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  font-size: clamp(17px, 1.2vw, 22px);
-  font-weight: 500;
-  color: var(--text-muted);
-  line-height: 1.35;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-}
-
-body[data-template="classic"] .audio-seeking-panel {
-  padding: 26px 30px;
-  border-radius: var(--radius-card);
-  background: var(--glass-surface);
-  border: 1.5px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  box-shadow: var(--glass-shadow), var(--glass-specular);
-}
-
-body[data-template="classic"] .floating-pill {
   padding: 12px 22px;
   border-radius: var(--radius-pill);
   background: var(--glass-surface);
@@ -922,6 +670,11 @@ body[data-template="classic"] .floating-pill {
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   color: var(--text-pure);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), var(--glass-specular);
+}
+
+.floating-pill svg {
+  color: var(--artwork-primary);
+  transition: color 0.5s ease;
 }
 
 /* ========================================================
@@ -1149,21 +902,13 @@ body[data-template="classic"] .floating-pill {
 }
 
 .meter-stat-pill {
-  background: color-mix(in oklab, white 8%, transparent);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   padding: 12px 16px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 16px 34px -22px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  transition: border-color 0.3s ease;
-}
-
-.meter-stat-pill:hover {
-  border-color: rgba(255, 255, 255, 0.45);
 }
 
 .meter-stat-pill .stat-name {
@@ -1195,19 +940,13 @@ body[data-template="classic"] .floating-pill {
    AIRPLAY 2 OSCILLOSCOPE & DATA SYNC CARD
    ======================================================== */
 .sync-oscilloscope-card {
-  background: color-mix(in oklab, white 10%, transparent);
-  border: 1px solid rgba(255, 255, 255, .28);
+  background: var(--glass-surface);
+  border: 1.5px solid var(--glass-border);
   border-radius: var(--radius-card);
   padding: 26px 32px;
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
+  backdrop-filter: blur(34px);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.4);
   margin-bottom: 30px;
-  transition: border-color .3s;
-}
-
-.sync-oscilloscope-card:hover {
-  border-color: rgba(255, 255, 255, .5);
 }
 
 .sync-card-header {
@@ -1307,21 +1046,13 @@ body[data-template="classic"] .floating-pill {
 }
 
 .ticker-box {
-  background: color-mix(in oklab, white 7%, transparent);
-  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 14px 28px -18px rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-  transition: border-color 0.3s ease;
-}
-
-.ticker-box:hover {
-  border-color: rgba(255, 255, 255, 0.40);
 }
 
 .t-label {
@@ -1362,21 +1093,16 @@ body[data-template="classic"] .floating-pill {
 }
 
 .tech-card {
-  background: color-mix(in oklab, white 10%, transparent);
-  border: 1px solid rgba(255, 255, 255, .28);
+  background: var(--glass-surface);
+  border: 1.5px solid var(--glass-border);
   border-radius: var(--radius-card);
   padding: 26px 30px;
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35), var(--glass-specular);
   display: flex;
   flex-direction: column;
   gap: 20px;
-  transition: border-color .3s;
-}
-
-.tech-card:hover {
-  border-color: rgba(255, 255, 255, .5);
 }
 
 .tech-card-header {
@@ -1589,18 +1315,20 @@ body[data-template="classic"] .floating-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: color-mix(in oklab, black 25%, color-mix(in oklab, white 12%, transparent));
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, .28);
+  background: var(--glass-surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1.5px solid var(--glass-border);
   border-radius: 9999px;
   padding: 4px 6px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 34px -22px rgba(0, 0, 0, .6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), var(--glass-specular);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .window-control-dock:hover {
-  border-color: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .window-action-btn {
@@ -1655,7 +1383,91 @@ body[data-template="classic"] .floating-pill {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Floating Side Desktop Panel (Option on the Side) */
+.side-desktop-panel {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(18, 20, 28, 0.58);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-right: none;
+  border-radius: 16px 0 0 16px;
+  padding: 10px 8px 10px 10px;
+  box-shadow: -4px 8px 30px rgba(0, 0, 0, 0.5), var(--glass-specular);
+  z-index: 1000;
+  opacity: 0.85;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
+.side-desktop-panel:hover {
+  opacity: 1;
+  background: rgba(24, 24, 32, 0.88);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: -8px 12px 36px rgba(0, 0, 0, 0.7);
+  transform: translateY(-50%) translateX(-4px);
+}
+
+.side-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.side-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.03);
+}
+
+.side-pill-btn:active {
+  transform: scale(0.95);
+  transition: transform 0.08s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.side-pill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side-pill-text {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.side-pill-kbd {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Mono", "Segoe UI Mono", monospace;
+  font-size: 0.65rem;
+  padding: 2px 5px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1;
+}
+
+.side-pill-btn:hover .side-pill-kbd {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
 
 /* ======================================================== */
 /* Accessibility: High-Contrast Focus Ring & Reduced Motion */
@@ -1805,109 +1617,5 @@ button:focus:not(:focus-visible) {
 .demo-play-btn:active {
   transform: scale(0.95);
 }
-
-/* ========================================================
-   EXPANDABLE LIQUID GLASS ACCORDION (LG-16 INSPIRATION)
-   Zero JS height calculations • GPU 0fr -> 1fr grid transition
-   ======================================================== */
-.glass-accordion-item {
-  border-radius: 18px;
-  overflow: hidden;
-  background: color-mix(in oklab, white 10%, transparent);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 16px 34px -22px rgba(0, 0, 0, 0.60);
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-  transition: border-color 0.3s ease;
-}
-
-.glass-accordion-item[open] {
-  border-color: rgba(255, 255, 255, 0.50);
-  will-change: transform;
-}
-
-.glass-accordion-summary {
-  list-style: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  padding: 16px 20px;
-}
-
-.glass-accordion-summary::-webkit-details-marker {
-  display: none;
-}
-
-.glass-accordion-summary:focus-visible {
-  outline: 3px solid #fff;
-  outline-offset: -3px;
-}
-
-.glass-accordion-marker {
-  position: relative;
-  flex: none;
-  width: 20px;
-  height: 20px;
-}
-
-.glass-accordion-marker::before,
-.glass-accordion-marker::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14px;
-  height: 2px;
-  background: #fff;
-  transform: translate(-50%, -50%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-accordion-marker::after {
-  transform: translate(-50%, -50%) rotate(90deg);
-}
-
-.glass-accordion-item[open] .glass-accordion-marker::after {
-  transform: translate(-50%, -50%) rotate(0);
-}
-
-.glass-accordion-wrap {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-accordion-item[open] .glass-accordion-wrap {
-  grid-template-rows: 1fr;
-}
-
-.glass-accordion-content {
-  overflow: hidden;
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.90);
-  padding: 0 20px;
-}
-
-.glass-accordion-item[open] .glass-accordion-content {
-  padding: 0 20px 20px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .glass-accordion-wrap {
-    transition: none;
-  }
-  .glass-accordion-marker::before,
-  .glass-accordion-marker::after {
-    transition: none;
-  }
-}
-
-
 
 

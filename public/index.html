@@ -5,23 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ShairDisplay — AirPlay 2 Hi-Fi Display</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
-  <link rel="stylesheet" href="./style.css?v=15.0">
+  <link rel="stylesheet" href="./style.css?v=16.0">
 </head>
 <body>
   <!-- Ambient Dynamic Artwork Color Mesh & Blur Backdrop -->
   <div id="ambient-color-mesh" class="ambient-color-mesh"></div>
   <div id="ambient-backdrop" class="ambient-backdrop"></div>
   <div class="ambient-liquid-overlay"></div>
-
-  <!-- Optical Liquid Glass SVG Refraction Engine -->
-  <svg class="optical-filters-def" aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none;">
-    <defs>
-      <filter id="liquid-glass-lens" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="turbulence" baseFrequency="0.012 0.025" numOctaves="2" result="turb" />
-        <feDisplacementMap in="SourceGraphic" in2="turb" scale="22" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </defs>
-  </svg>
 
   <!-- Dashboard Shell -->
   <div class="dashboard-shell">
@@ -716,6 +706,6 @@
 
   </div>
 
-  <script src="./app.js?v=14.0"></script>
+  <script src="./app.js?v=16.0"></script>
 </body>
 </html>

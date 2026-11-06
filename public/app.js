@@ -936,33 +936,7 @@
     });
   }
 
-  // ========================================================
-  // Liquid Glass Template Switcher (Sample 1 vs Classic)
-  // Default is Sample 1 (liquid-pills); Classic is reserved & switchable
-  // ========================================================
-  function initTemplateTheme() {
-    const saved = localStorage.getItem('shairdisplay_template') || 'liquid-pills';
-    document.body.setAttribute('data-template', saved);
 
-    const pill = document.getElementById('protocol-pill');
-    if (pill) {
-      pill.style.cursor = 'pointer';
-      pill.title = "Click or press 'G' to switch style (Liquid Glass Pills / Classic)";
-      pill.addEventListener('click', toggleTemplateTheme);
-    }
-  }
-
-  function toggleTemplateTheme() {
-    const current = document.body.getAttribute('data-template') === 'classic' ? 'classic' : 'liquid-pills';
-    const next = current === 'classic' ? 'liquid-pills' : 'classic';
-    document.body.setAttribute('data-template', next);
-    localStorage.setItem('shairdisplay_template', next);
-    console.log('[ShairDisplay] Theme template switched to:', next);
-  }
-
-  window.toggleTemplateTheme = toggleTemplateTheme;
-
-  initTemplateTheme();
 
   // Global Keyboard Shortcuts
   window.addEventListener('keydown', (e) => {
@@ -987,10 +961,6 @@
     // 'r' -> Reload UI
     else if (key === 'r') {
       location.reload();
-    }
-    // 'g' -> Toggle Theme Template (Liquid Glass Pills / Classic)
-    else if (key === 'g') {
-      toggleTemplateTheme();
     }
     // Window management shortcuts ONLY apply on the physical Raspberry Pi display
     if (isLocalDisplay) {
