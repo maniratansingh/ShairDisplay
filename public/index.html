@@ -33,15 +33,15 @@
       </div>
 
       <!-- Center: Segmented Navigation Control -->
-      <nav class="nav-segment-control">
-        <button id="tab-btn-now-playing" class="nav-tab-btn active" data-tab="now-playing">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+      <nav class="nav-segment-control" role="tablist" aria-label="Display View Navigation">
+        <button id="tab-btn-now-playing" class="nav-tab-btn active" role="tab" aria-selected="true" aria-controls="view-now-playing" data-tab="now-playing">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
           </svg>
           <span>Now Playing</span>
         </button>
-        <button id="tab-btn-diagnostics" class="nav-tab-btn" data-tab="diagnostics">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <button id="tab-btn-diagnostics" class="nav-tab-btn" role="tab" aria-selected="false" aria-controls="view-diagnostics" data-tab="diagnostics">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
           <span>Advanced Diagnostics</span>
@@ -164,9 +164,9 @@
                 <div class="progress-scrub-knob" id="progress-knob"></div>
               </div>
             </div>
-            <div class="time-readout-row">
-              <span class="time-counter" id="time-elapsed">0:00</span>
-              <span class="time-counter remaining" id="time-duration">0:00</span>
+            <div class="time-readout-row" aria-label="Playback Timing">
+              <span class="time-counter" id="time-elapsed" aria-label="Elapsed Time">0:00</span>
+              <span class="time-counter remaining" id="time-duration" aria-label="Track Duration">0:00</span>
             </div>
             <div class="seek-hint-toast" id="seek-hint-toast">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
