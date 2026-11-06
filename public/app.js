@@ -267,6 +267,10 @@
     elProgressKnob.style.left = '0%';
     elTimeElapsed.textContent = '0:00';
     elTimeDuration.textContent = '0:00';
+    if (elProgressBarContainer) {
+      elProgressBarContainer.setAttribute('aria-valuenow', '0');
+      elProgressBarContainer.setAttribute('aria-valuetext', '0:00 of 0:00');
+    }
     if (elMeterFrameClock) elMeterFrameClock.textContent = '0 frames';
   }
 
@@ -329,6 +333,10 @@
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
       elTimeDuration.textContent = formatTime(playbackData.durationMs);
+      if (elProgressBarContainer) {
+        elProgressBarContainer.setAttribute('aria-valuenow', Math.round(percent).toString());
+        elProgressBarContainer.setAttribute('aria-valuetext', `${formatTime(currentPosition)} of ${formatTime(playbackData.durationMs)}`);
+      }
 
       // Frame Clock: Hardware sample count
       if (elMeterFrameClock && receiverData && receiverData.alsaRunning) {
@@ -351,6 +359,10 @@
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
       elTimeElapsed.textContent = formatTime(currentPosition);
       elTimeDuration.textContent = formatTime(playbackData.durationMs);
+      if (elProgressBarContainer) {
+        elProgressBarContainer.setAttribute('aria-valuenow', Math.round(percent).toString());
+        elProgressBarContainer.setAttribute('aria-valuetext', `${formatTime(currentPosition)} of ${formatTime(playbackData.durationMs)}`);
+      }
     } else {
       resetProgressUI();
     }

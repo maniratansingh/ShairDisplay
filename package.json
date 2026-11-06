@@ -4,7 +4,8 @@
   "description": "AirPlay 2 Hi-Fi Music Display & Precision Diagnostics for Shairport Sync by Mike Brady",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --check server.js && node --check public/app.js"
   },
   "dependencies": {
     "dbus-next": "^0.10.2",

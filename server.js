@@ -713,6 +713,18 @@ wss.on('connection', (ws) => {
 // ========================================================
 // EXEC_ENV defined at top of file
 
+// Security Middleware: restrict hardware window management endpoints to local host only
+function requireLocalAccess(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || '';
+  const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || ip.includes('localhost');
+  if (!isLocal) {
+    return res.status(403).json({ error: 'Access denied: window management permitted from localhost only' });
+  }
+  next();
+}
+
+app.use('/api/system/window', requireLocalAccess);
+
 // Minimize window to Raspberry Pi desktop
 app.post('/api/system/window/minimize', (req, res) => {
   const cmd = 'DISPLAY=:0 xdotool search --onlyvisible --class chromium windowminimize 2>/dev/null || (XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-0 wlrctl toplevel minimize 2>/dev/null)';
