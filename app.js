@@ -109,12 +109,16 @@
   function switchTab(tabId) {
     if (tabId === 'now-playing') {
       tabBtnNowPlaying.classList.add('active');
+      tabBtnNowPlaying.setAttribute('aria-selected', 'true');
       tabBtnDiagnostics.classList.remove('active');
+      tabBtnDiagnostics.setAttribute('aria-selected', 'false');
       viewNowPlaying.classList.add('active');
       viewDiagnostics.classList.remove('active');
     } else {
       tabBtnDiagnostics.classList.add('active');
+      tabBtnDiagnostics.setAttribute('aria-selected', 'true');
       tabBtnNowPlaying.classList.remove('active');
+      tabBtnNowPlaying.setAttribute('aria-selected', 'false');
       viewDiagnostics.classList.add('active');
       viewNowPlaying.classList.remove('active');
     }
