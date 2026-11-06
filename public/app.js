@@ -262,6 +262,7 @@
     if (elAudioSeekingPanel) {
       elAudioSeekingPanel.classList.add('stopped');
       elAudioSeekingPanel.classList.remove('playing');
+      elAudioSeekingPanel.style.setProperty('--p', '0');
     }
     elProgressFill.style.width = '0%';
     elProgressKnob.style.left = '0%';
@@ -324,6 +325,7 @@
       if (elAudioSeekingPanel) {
         elAudioSeekingPanel.classList.remove('stopped');
         elAudioSeekingPanel.classList.add('playing');
+        elAudioSeekingPanel.style.setProperty('--p', percent.toFixed(2));
       }
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
@@ -346,6 +348,7 @@
       if (elAudioSeekingPanel) {
         elAudioSeekingPanel.classList.remove('stopped');
         elAudioSeekingPanel.classList.add('playing');
+        elAudioSeekingPanel.style.setProperty('--p', percent.toFixed(2));
       }
       elProgressFill.style.width = `${percent.toFixed(2)}%`;
       elProgressKnob.style.left = `${percent.toFixed(2)}%`;
